@@ -324,7 +324,110 @@ const Admin = () => {
     );
   }
 
-  // DETAIL VIEW
+  // EDIT VIEW
+  if (view === "edit" && editingId) {
+    return (
+      <div className="min-h-screen bg-background">
+        <header className="border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-10">
+          <div className="container max-w-3xl mx-auto px-4 py-4 flex items-center gap-3">
+            <button onClick={() => { setView("list"); setEditingId(null); }} className="text-muted-foreground hover:text-foreground">
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+            <h1 className="text-xl font-heading font-bold text-foreground">Editar Rateio</h1>
+          </div>
+        </header>
+        <main className="container max-w-3xl mx-auto px-4 py-8">
+          <form onSubmit={updateRateio} className="bg-card border border-border rounded-xl p-6 shadow-md space-y-4">
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-foreground">Título *</label>
+              <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} className="bg-background" />
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-foreground">Descrição</label>
+              <Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} className="bg-background" />
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-foreground">Nova foto (opcional)</label>
+              <Input type="file" accept="image/*" onChange={(e) => setPhotoFile(e.target.files?.[0] || null)} className="bg-background" />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-foreground">Unidade</label>
+                <Select value={form.unit_type} onValueChange={(v) => setForm({ ...form, unit_type: v })}>
+                  <SelectTrigger className="bg-background"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="kg">Quilograma (kg)</SelectItem>
+                    <SelectItem value="litro">Litro (L)</SelectItem>
+                    <SelectItem value="unidade">Unidade (un)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-foreground">Quantidade total</label>
+                <Input type="number" step="0.1" min="0.1" value={form.total_quantity} onChange={(e) => setForm({ ...form, total_quantity: e.target.value })} className="bg-background" />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-foreground">Preço por unidade (R$)</label>
+                <Input type="number" step="0.01" min="0" value={form.price_per_unit} onChange={(e) => setForm({ ...form, price_per_unit: e.target.value })} className="bg-background" />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-foreground">Taxa admin (%)</label>
+                <Input type="number" step="1" min="0" max="100" value={form.admin_fee_percent} onChange={(e) => setForm({ ...form, admin_fee_percent: e.target.value })} className="bg-background" />
+              </div>
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-foreground">Chave PIX</label>
+              <Input value={form.pix_key} onChange={(e) => setForm({ ...form, pix_key: e.target.value })} className="bg-background" />
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-foreground">Nome do beneficiário PIX</label>
+              <Input value={form.pix_merchant_name} onChange={(e) => setForm({ ...form, pix_merchant_name: e.target.value })} className="bg-background" />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-foreground">Slug (URL)</label>
+                <Input value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "") })} className="bg-background" />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-foreground">Visibilidade</label>
+                <Select value={form.visibility} onValueChange={(v) => setForm({ ...form, visibility: v })}>
+                  <SelectTrigger className="bg-background"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="public">Público</SelectItem>
+                    <SelectItem value="secret">Secreto (só com link)</SelectItem>
+                    <SelectItem value="hidden">Oculto (não aparece)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-foreground">Status</label>
+                <Select value={rateios.find(r => r.id === editingId)?.status || "open"} onValueChange={async (v) => {
+                  await supabase.from("rateios").update({ status: v }).eq("id", editingId);
+                  await loadData();
+                }}>
+                  <SelectTrigger className="bg-background"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="open">Aberto</SelectItem>
+                    <SelectItem value="closed">Fechado</SelectItem>
+                    <SelectItem value="finished">Finalizado</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <Button type="submit" className="w-full" disabled={saving}>
+              {saving ? "Salvando..." : "Salvar Alterações"}
+            </Button>
+          </form>
+        </main>
+      </div>
+    );
+  }
+
   if (view === "detail" && selectedRateio) {
     const rateioParticipants = participants.filter((p) => p.rateio_id === selectedRateio.id);
     const unitLabel = selectedRateio.unit_type === "kg" ? "kg" : selectedRateio.unit_type === "litro" ? "L" : "un";
