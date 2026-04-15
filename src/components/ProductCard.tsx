@@ -6,9 +6,12 @@ interface ProductCardProps {
   totalPrice: number;
   totalWeight: number;
   remainingPercent: number;
+  pricePerKg: number;
+  adminFeePercent: number;
+  adminFee: number;
 }
 
-const ProductCard = ({ name, description, totalPrice, totalWeight, remainingPercent }: ProductCardProps) => {
+const ProductCard = ({ name, description, totalPrice, totalWeight, remainingPercent, pricePerKg, adminFeePercent, adminFee }: ProductCardProps) => {
   return (
     <div className="rounded-xl overflow-hidden bg-card border border-border shadow-lg">
       <div className="relative h-64 overflow-hidden">
@@ -25,16 +28,22 @@ const ProductCard = ({ name, description, totalPrice, totalWeight, remainingPerc
           <p className="text-primary-foreground/80 text-sm mt-1">{description}</p>
         </div>
       </div>
-      <div className="p-6 grid grid-cols-3 gap-4 text-center">
+      <div className="p-6 grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
         <div>
-          <p className="text-sm text-muted-foreground">Valor Total</p>
+          <p className="text-sm text-muted-foreground">R$/kg</p>
           <p className="text-xl font-heading font-bold text-foreground">
-            R$ {totalPrice.toFixed(2).replace('.', ',')}
+            R$ {pricePerKg.toFixed(2).replace('.', ',')}
           </p>
         </div>
         <div>
           <p className="text-sm text-muted-foreground">Peso Total</p>
           <p className="text-xl font-heading font-bold text-foreground">{totalWeight.toFixed(1).replace('.', ',')} kg</p>
+        </div>
+        <div>
+          <p className="text-sm text-muted-foreground">Total c/ taxa ({adminFeePercent}%)</p>
+          <p className="text-xl font-heading font-bold text-foreground">
+            R$ {totalPrice.toFixed(2).replace('.', ',')}
+          </p>
         </div>
         <div>
           <p className="text-sm text-muted-foreground">Disponível</p>
