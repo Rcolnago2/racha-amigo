@@ -35,9 +35,8 @@ function maskEmail(email: string): string {
 function maskPhone(phone: string): string {
   const digits = phone.replace(/\D/g, "");
   if (digits.length < 4) return "***";
-  const ddd = digits.slice(0, 2);
   const last2 = digits.slice(-2);
-  return `(${ddd}) *****-**${last2}`;
+  return `***-**${last2}`;
 }
 
 export interface Participant {
