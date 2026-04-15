@@ -83,11 +83,11 @@ const ParticipantList = ({ participants, totalPrice, totalWeight, unitLabel = "k
             <div key={p.id} className="p-4 space-y-2">
               <div className="flex items-center justify-between">
                 <div className="flex-1 min-w-0">
-                  <p className="font-medium text-foreground">{p.name}</p>
+                  <p className="font-medium text-foreground">{maskName(p.name)}</p>
                   <p className="text-sm text-muted-foreground truncate">
                     {p.percent}% · R$ {value.toFixed(2).replace(".", ",")} · {weight.toFixed(2).replace(".", ",")} {unitLabel}
                   </p>
-                  <p className="text-xs text-muted-foreground truncate">{p.email} · {p.phone}</p>
+                  <p className="text-xs text-muted-foreground truncate">{maskEmail(p.email)} · {maskPhone(p.phone)}</p>
                 </div>
                 <Button variant="ghost" size="icon" onClick={() => onRemove(p.id)} className="text-muted-foreground hover:text-destructive shrink-0">
                   <Trash2 className="w-4 h-4" />
