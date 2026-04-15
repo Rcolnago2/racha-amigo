@@ -44,11 +44,22 @@ interface Participant {
   rateio_id: string | null;
 }
 
+interface Interest {
+  id: string;
+  rateio_id: string;
+  name: string;
+  email: string;
+  phone: string;
+  status: string;
+  created_at: string;
+}
+
 const Admin = () => {
   const [authenticated, setAuthenticated] = useState(false);
   const [password, setPassword] = useState("");
   const [rateios, setRateios] = useState<Rateio[]>([]);
   const [participants, setParticipants] = useState<Participant[]>([]);
+  const [interests, setInterests] = useState<Interest[]>([]);
   const [view, setView] = useState<"list" | "create" | "detail" | "edit">("list");
   const [selectedRateio, setSelectedRateio] = useState<Rateio | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
