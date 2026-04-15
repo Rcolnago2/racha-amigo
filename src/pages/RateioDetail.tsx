@@ -19,31 +19,37 @@ interface Rateio {
   pix_key: string;
   pix_merchant_name: string;
   status: string;
+  slug: string;
+  visibility: string;
 }
 
 const RateioDetail = () => {
-  const { id } = useParams<{ id: string }>();
+  const { slug } = useParams<{ slug: string }>();
   const [rateio, setRateio] = useState<Rateio | null>(null);
   const [participants, setParticipants] = useState<Participant[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const load = async () => {
-      if (!id) return;
-      const [rateioRes, partRes] = await Promise.all([
-        supabase.from("rateios").select("*").eq("id", id).single(),
-        supabase
+      if (!slug) return;
+      // Try slug first, then fallback to id
+      let rateioRes = await supabase.from("rateios").select("*").eq("slug", slug).maybeSingle();
+      if (!rateioRes.data) {
+        rateioRes = await supabase.from("rateios").select("*").eq("id", slug).maybeSingle();
+      }
+      if (rateioRes.data) {
+        setRateio(rateioRes.data);
+        const { data: partData } = await supabase
           .from("participants")
           .select("id, name, email, phone, percent, receipt_url, payment_confirmed")
-          .eq("rateio_id", id)
-          .order("created_at", { ascending: true }),
-      ]);
-      if (rateioRes.data) setRateio(rateioRes.data);
-      if (partRes.data) setParticipants(partRes.data);
+          .eq("rateio_id", rateioRes.data.id)
+          .order("created_at", { ascending: true });
+        if (partData) setParticipants(partData);
+      }
       setLoading(false);
     };
     load();
-  }, [id]);
+  }, [slug]);
 
   if (loading) {
     return (

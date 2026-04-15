@@ -225,6 +225,24 @@ const Admin = () => {
               <label className="text-sm font-medium text-foreground">Nome do beneficiário PIX</label>
               <Input value={form.pix_merchant_name} onChange={(e) => setForm({ ...form, pix_merchant_name: e.target.value })} placeholder="COMPRA COLETIVA" className="bg-background" />
             </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-foreground">Slug (URL)</label>
+                <Input value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "") })} placeholder="ex: queijo-canastra" className="bg-background" />
+                <p className="text-xs text-muted-foreground">Se vazio, será gerado pelo título</p>
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-foreground">Visibilidade</label>
+                <Select value={form.visibility} onValueChange={(v) => setForm({ ...form, visibility: v })}>
+                  <SelectTrigger className="bg-background"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="public">Público</SelectItem>
+                    <SelectItem value="secret">Secreto (só com link)</SelectItem>
+                    <SelectItem value="hidden">Oculto (não aparece)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
 
             <div className="bg-muted rounded-lg p-3 text-center">
               <p className="text-xs text-muted-foreground">Total estimado</p>

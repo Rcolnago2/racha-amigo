@@ -18,7 +18,8 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/rateio/:id" element={<RateioDetail />} />
+          <Route path="/rateio/:slug" element={<RateioDetail />} />
+          <Route path="/r/:slug" element={<RateioDetail />} />
           <Route path="/admin" element={<Admin />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
