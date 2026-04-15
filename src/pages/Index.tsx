@@ -1,17 +1,18 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import ProductCard from "@/components/ProductCard";
 import ParticipantForm from "@/components/ParticipantForm";
 import ParticipantList, { type Participant } from "@/components/ParticipantList";
-
-const PRODUCT = {
-  name: "Queijo Canastra Artesanal",
-  description: "Queijo minas artesanal da Serra da Canastra, maturado por 22 dias. Compra direto do produtor.",
-  totalPrice: 450,
-  totalWeight: 5,
-};
+import ProductSettings from "@/components/ProductSettings";
 
 const Index = () => {
   const [participants, setParticipants] = useState<Participant[]>([]);
+  const [totalWeight, setTotalWeight] = useState(5);
+  const [pricePerKg, setPricePerKg] = useState(90);
+  const [adminFeePercent, setAdminFeePercent] = useState(5);
+
+  const subtotal = totalWeight * pricePerKg;
+  const adminFee = subtotal * (adminFeePercent / 100);
+  const totalPrice = subtotal + adminFee;
 
   const usedPercent = participants.reduce((s, p) => s + p.percent, 0);
   const remainingPercent = 100 - usedPercent;
@@ -29,7 +30,6 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
       <header className="border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-10">
         <div className="container max-w-3xl mx-auto px-4 py-4 flex items-center gap-3">
           <span className="text-2xl">🧀</span>
@@ -38,25 +38,37 @@ const Index = () => {
       </header>
 
       <main className="container max-w-3xl mx-auto px-4 py-8 space-y-6">
+        <ProductSettings
+          totalWeight={totalWeight}
+          pricePerKg={pricePerKg}
+          adminFeePercent={adminFeePercent}
+          onWeightChange={setTotalWeight}
+          onPricePerKgChange={setPricePerKg}
+          onAdminFeeChange={setAdminFeePercent}
+        />
+
         <ProductCard
-          name={PRODUCT.name}
-          description={PRODUCT.description}
-          totalPrice={PRODUCT.totalPrice}
-          totalWeight={PRODUCT.totalWeight}
+          name="Queijo Canastra Artesanal"
+          description="Queijo minas artesanal da Serra da Canastra, maturado por 22 dias. Compra direto do produtor."
+          totalPrice={totalPrice}
+          totalWeight={totalWeight}
           remainingPercent={remainingPercent}
+          pricePerKg={pricePerKg}
+          adminFeePercent={adminFeePercent}
+          adminFee={adminFee}
         />
 
         <div className="grid gap-6 md:grid-cols-2">
           <ParticipantForm
             remainingPercent={remainingPercent}
-            totalPrice={PRODUCT.totalPrice}
-            totalWeight={PRODUCT.totalWeight}
+            totalPrice={totalPrice}
+            totalWeight={totalWeight}
             onAdd={addParticipant}
           />
           <ParticipantList
             participants={participants}
-            totalPrice={PRODUCT.totalPrice}
-            totalWeight={PRODUCT.totalWeight}
+            totalPrice={totalPrice}
+            totalWeight={totalWeight}
             onRemove={removeParticipant}
           />
         </div>
