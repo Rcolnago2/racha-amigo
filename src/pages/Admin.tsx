@@ -87,12 +87,26 @@ const Admin = () => {
   }, [authenticated]);
 
   const loadData = async () => {
-    const [rRes, pRes] = await Promise.all([
+    const [rRes, pRes, iRes] = await Promise.all([
       supabase.from("rateios").select("*").order("created_at", { ascending: false }),
       supabase.from("participants").select("*").order("created_at", { ascending: true }),
+      supabase.from("rateio_interests").select("*").order("created_at", { ascending: false }),
     ]);
     if (rRes.data) setRateios(rRes.data);
     if (pRes.data) setParticipants(pRes.data);
+    if (iRes.data) setInterests(iRes.data as Interest[]);
+  };
+
+  const approveInterest = async (id: string) => {
+    await supabase.from("rateio_interests").update({ status: "approved" }).eq("id", id);
+    setInterests((prev) => prev.map((i) => (i.id === id ? { ...i, status: "approved" } : i)));
+    toast({ title: "Interesse aprovado ✅" });
+  };
+
+  const rejectInterest = async (id: string) => {
+    await supabase.from("rateio_interests").update({ status: "rejected" }).eq("id", id);
+    setInterests((prev) => prev.map((i) => (i.id === id ? { ...i, status: "rejected" } : i)));
+    toast({ title: "Interesse rejeitado" });
   };
 
   const createRateio = async (e: React.FormEvent) => {
