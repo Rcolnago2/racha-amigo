@@ -586,6 +586,9 @@ const Admin = () => {
                       <Button size="sm" variant="outline" onClick={() => { setSelectedRateio(r); setView("detail"); }}>
                         Ver detalhes
                       </Button>
+                      <Button size="sm" variant="outline" onClick={() => startEdit(r)}>
+                        Editar
+                      </Button>
                       <Button size="sm" variant="ghost" className="text-destructive" onClick={() => deleteRateio(r.id)}>
                         <Trash2 className="w-3.5 h-3.5" />
                       </Button>
