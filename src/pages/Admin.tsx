@@ -149,6 +149,69 @@ const Admin = () => {
     toast({ title: "Rateio excluído" });
   };
 
+  const startEdit = (r: Rateio) => {
+    setEditingId(r.id);
+    setForm({
+      title: r.title,
+      description: r.description || "",
+      unit_type: r.unit_type,
+      total_quantity: String(r.total_quantity),
+      price_per_unit: String(r.price_per_unit),
+      admin_fee_percent: String(r.admin_fee_percent),
+      pix_key: r.pix_key,
+      pix_merchant_name: r.pix_merchant_name,
+      slug: r.slug,
+      visibility: r.visibility,
+    });
+    setPhotoFile(null);
+    setView("edit");
+  };
+
+  const updateRateio = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingId || !form.title.trim()) { toast({ title: "Informe o título", variant: "destructive" }); return; }
+    setSaving(true);
+
+    try {
+      let photo_url: string | undefined = undefined;
+      if (photoFile) {
+        const ext = photoFile.name.split(".").pop();
+        const path = `${crypto.randomUUID()}.${ext}`;
+        const { error: upErr } = await supabase.storage.from("rateio-photos").upload(path, photoFile);
+        if (upErr) throw upErr;
+        photo_url = supabase.storage.from("rateio-photos").getPublicUrl(path).data.publicUrl;
+      }
+
+      const slug = form.slug.trim() || form.title.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+      const updateData: Record<string, unknown> = {
+        title: form.title.trim(),
+        description: form.description.trim() || null,
+        unit_type: form.unit_type,
+        total_quantity: Number(form.total_quantity),
+        price_per_unit: Number(form.price_per_unit),
+        admin_fee_percent: Number(form.admin_fee_percent),
+        pix_key: form.pix_key.trim(),
+        pix_merchant_name: form.pix_merchant_name.trim(),
+        slug,
+        visibility: form.visibility,
+      };
+      if (photo_url) updateData.photo_url = photo_url;
+
+      const { error } = await supabase.from("rateios").update(updateData).eq("id", editingId);
+      if (error) throw error;
+
+      toast({ title: "Rateio atualizado! ✅" });
+      await loadData();
+      setView("list");
+      setEditingId(null);
+    } catch (err) {
+      console.error(err);
+      toast({ title: "Erro ao atualizar rateio", variant: "destructive" });
+    } finally {
+      setSaving(false);
+    }
+  };
+
   if (!authenticated) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
