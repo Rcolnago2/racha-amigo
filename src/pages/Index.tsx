@@ -1,50 +1,35 @@
 import { useState, useEffect } from "react";
-import ProductCard from "@/components/ProductCard";
-import ParticipantForm from "@/components/ParticipantForm";
-import ParticipantList from "@/components/ParticipantList";
-import type { Participant } from "@/components/ParticipantList";
-import ProductSettings from "@/components/ProductSettings";
+import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { Plus, Users, ChevronRight } from "lucide-react";
+
+interface Rateio {
+  id: string;
+  title: string;
+  description: string | null;
+  photo_url: string | null;
+  unit_type: string;
+  total_quantity: number;
+  price_per_unit: number;
+  admin_fee_percent: number;
+  status: string;
+  created_at: string;
+}
 
 const Index = () => {
-  const [participants, setParticipants] = useState<Participant[]>([]);
-  const [totalWeight, setTotalWeight] = useState(5);
-  const [pricePerKg, setPricePerKg] = useState(90);
-  const [adminFeePercent, setAdminFeePercent] = useState(5);
+  const [rateios, setRateios] = useState<Rateio[]>([]);
 
-  const subtotal = totalWeight * pricePerKg;
-  const adminFee = subtotal * (adminFeePercent / 100);
-  const totalPrice = subtotal + adminFee;
-
-  const usedPercent = participants.reduce((s, p) => s + p.percent, 0);
-  const remainingPercent = 100 - usedPercent;
-
-  // Load participants from database on mount
   useEffect(() => {
-    const loadParticipants = async () => {
+    const load = async () => {
       const { data } = await supabase
-        .from("participants")
-        .select("id, name, email, phone, percent, receipt_url, payment_confirmed")
-        .order("created_at", { ascending: true });
-      if (data) setParticipants(data);
+        .from("rateios")
+        .select("*")
+        .eq("status", "open")
+        .order("created_at", { ascending: false });
+      if (data) setRateios(data);
     };
-    loadParticipants();
+    load();
   }, []);
-
-  const addParticipant = (participant: Participant) => {
-    setParticipants((prev) => [...prev, participant]);
-  };
-
-  const removeParticipant = async (id: string) => {
-    await supabase.from("participants").delete().eq("id", id);
-    setParticipants((prev) => prev.filter((p) => p.id !== id));
-  };
-
-  const handleReceiptUploaded = (id: string, url: string) => {
-    setParticipants((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, receipt_url: url } : p))
-    );
-  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -56,41 +41,53 @@ const Index = () => {
       </header>
 
       <main className="container max-w-3xl mx-auto px-4 py-8 space-y-6">
-        <ProductSettings
-          totalWeight={totalWeight}
-          pricePerKg={pricePerKg}
-          adminFeePercent={adminFeePercent}
-          onWeightChange={setTotalWeight}
-          onPricePerKgChange={setPricePerKg}
-          onAdminFeeChange={setAdminFeePercent}
-        />
-
-        <ProductCard
-          name="Queijo Canastra Artesanal"
-          description="Queijo minas artesanal da Serra da Canastra, maturado por 22 dias. Compra direto do produtor."
-          totalPrice={totalPrice}
-          totalWeight={totalWeight}
-          remainingPercent={remainingPercent}
-          pricePerKg={pricePerKg}
-          adminFeePercent={adminFeePercent}
-          adminFee={adminFee}
-        />
-
-        <div className="grid gap-6 md:grid-cols-2">
-          <ParticipantForm
-            remainingPercent={remainingPercent}
-            totalPrice={totalPrice}
-            totalWeight={totalWeight}
-            onAdd={addParticipant}
-          />
-          <ParticipantList
-            participants={participants}
-            totalPrice={totalPrice}
-            totalWeight={totalWeight}
-            onRemove={removeParticipant}
-            onReceiptUploaded={handleReceiptUploaded}
-          />
+        <div className="text-center space-y-2">
+          <h2 className="text-2xl font-heading font-bold text-foreground">Rateios Abertos</h2>
+          <p className="text-muted-foreground">Escolha um rateio para participar</p>
         </div>
+
+        {rateios.length === 0 ? (
+          <div className="bg-card border border-border rounded-xl p-8 text-center">
+            <p className="text-muted-foreground">Nenhum rateio aberto no momento.</p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {rateios.map((r) => {
+              const subtotal = r.total_quantity * r.price_per_unit;
+              const total = subtotal * (1 + r.admin_fee_percent / 100);
+              const unitLabel = r.unit_type === "kg" ? "kg" : r.unit_type === "litro" ? "L" : "un";
+
+              return (
+                <Link
+                  key={r.id}
+                  to={`/rateio/${r.id}`}
+                  className="block bg-card border border-border rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+                >
+                  <div className="flex">
+                    {r.photo_url && (
+                      <div className="w-32 h-32 shrink-0">
+                        <img src={r.photo_url} alt={r.title} className="w-full h-full object-cover" />
+                      </div>
+                    )}
+                    <div className="flex-1 p-4 flex items-center justify-between">
+                      <div className="min-w-0">
+                        <h3 className="font-heading font-bold text-foreground text-lg truncate">{r.title}</h3>
+                        {r.description && (
+                          <p className="text-sm text-muted-foreground line-clamp-2">{r.description}</p>
+                        )}
+                        <div className="flex gap-3 mt-2 text-xs text-muted-foreground">
+                          <span>{r.total_quantity} {unitLabel}</span>
+                          <span>R$ {total.toFixed(2).replace(".", ",")}</span>
+                        </div>
+                      </div>
+                      <ChevronRight className="w-5 h-5 text-muted-foreground shrink-0" />
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        )}
       </main>
     </div>
   );
