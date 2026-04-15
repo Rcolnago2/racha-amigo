@@ -24,6 +24,7 @@ export type Database = {
           percent: number
           phone: string
           product_name: string
+          rateio_id: string | null
           receipt_url: string | null
           value_brl: number
           weight_kg: number
@@ -36,7 +37,8 @@ export type Database = {
           payment_confirmed?: boolean
           percent: number
           phone: string
-          product_name?: string
+          product_name: string
+          rateio_id?: string | null
           receipt_url?: string | null
           value_brl: number
           weight_kg: number
@@ -50,9 +52,63 @@ export type Database = {
           percent?: number
           phone?: string
           product_name?: string
+          rateio_id?: string | null
           receipt_url?: string | null
           value_brl?: number
           weight_kg?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "participants_rateio_id_fkey"
+            columns: ["rateio_id"]
+            isOneToOne: false
+            referencedRelation: "rateios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rateios: {
+        Row: {
+          admin_fee_percent: number
+          created_at: string
+          description: string | null
+          id: string
+          photo_url: string | null
+          pix_key: string
+          pix_merchant_name: string
+          price_per_unit: number
+          status: string
+          title: string
+          total_quantity: number
+          unit_type: string
+        }
+        Insert: {
+          admin_fee_percent?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          photo_url?: string | null
+          pix_key?: string
+          pix_merchant_name?: string
+          price_per_unit?: number
+          status?: string
+          title: string
+          total_quantity?: number
+          unit_type?: string
+        }
+        Update: {
+          admin_fee_percent?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          photo_url?: string | null
+          pix_key?: string
+          pix_merchant_name?: string
+          price_per_unit?: number
+          status?: string
+          title?: string
+          total_quantity?: number
+          unit_type?: string
         }
         Relationships: []
       }
