@@ -2,6 +2,44 @@ import { Button } from "@/components/ui/button";
 import { Trash2, CheckCircle, Clock } from "lucide-react";
 import ReceiptUpload from "@/components/ReceiptUpload";
 
+const popularProviders = ["gmail.com", "hotmail.com", "outlook.com", "yahoo.com", "icloud.com", "live.com", "msn.com", "aol.com", "protonmail.com", "uol.com.br", "bol.com.br", "terra.com.br", "ig.com.br", "globo.com"];
+
+function maskName(name: string): string {
+  const parts = name.split(" ");
+  return parts.map(p => p[0] + "***").join(" ");
+}
+
+function maskEmail(email: string): string {
+  const [local, domain] = email.split("@");
+  if (!domain) return "***@***";
+  const isPopular = popularProviders.includes(domain.toLowerCase());
+  // Pick 3 random chars from local part
+  const chars = local.split("");
+  const picked: string[] = [];
+  const indices = new Set<number>();
+  while (picked.length < Math.min(3, chars.length)) {
+    const i = Math.floor(Math.random() * chars.length);
+    if (!indices.has(i)) {
+      indices.add(i);
+      picked.push(chars[i]);
+    }
+  }
+  const maskedLocal = picked.join("") + "***";
+  if (isPopular) {
+    // Show partial provider: first 2 chars + ***
+    return `${maskedLocal}@${domain.slice(0, 2)}***`;
+  }
+  return `${maskedLocal}@***`;
+}
+
+function maskPhone(phone: string): string {
+  const digits = phone.replace(/\D/g, "");
+  if (digits.length < 4) return "***";
+  const ddd = digits.slice(0, 2);
+  const last2 = digits.slice(-2);
+  return `(${ddd}) *****-**${last2}`;
+}
+
 export interface Participant {
   id: string;
   name: string;
