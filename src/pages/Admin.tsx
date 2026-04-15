@@ -183,7 +183,7 @@ const Admin = () => {
       }
 
       const slug = form.slug.trim() || form.title.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-      const updateData: Record<string, unknown> = {
+      const updateData = {
         title: form.title.trim(),
         description: form.description.trim() || null,
         unit_type: form.unit_type,
@@ -194,8 +194,8 @@ const Admin = () => {
         pix_merchant_name: form.pix_merchant_name.trim(),
         slug,
         visibility: form.visibility,
+        ...(photo_url ? { photo_url } : {}),
       };
-      if (photo_url) updateData.photo_url = photo_url;
 
       const { error } = await supabase.from("rateios").update(updateData).eq("id", editingId);
       if (error) throw error;
