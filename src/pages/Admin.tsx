@@ -397,8 +397,13 @@ const Admin = () => {
                       <div>
                         <h3 className="font-heading font-bold text-foreground">{r.title}</h3>
                         <p className="text-xs text-muted-foreground">
-                          {r.total_quantity} {unitLabel} · PIX: {r.pix_key}
+                          /{r.slug} · {r.total_quantity} {unitLabel} · PIX: {r.pix_key}
                         </p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className={`text-xs px-2 py-0.5 rounded-full ${r.visibility === "public" ? "bg-primary/20 text-primary" : r.visibility === "secret" ? "bg-warning/20 text-warning" : "bg-muted text-muted-foreground"}`}>
+                          {r.visibility === "public" ? "Público" : r.visibility === "secret" ? "Secreto" : "Oculto"}
+                        </span>
                       </div>
                       <span className={`text-xs px-2 py-0.5 rounded-full ${r.status === "open" ? "bg-success/20 text-success" : "bg-muted text-muted-foreground"}`}>
                         {r.status === "open" ? "Aberto" : r.status === "closed" ? "Fechado" : "Finalizado"}
