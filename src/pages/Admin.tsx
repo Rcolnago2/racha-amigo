@@ -540,6 +540,44 @@ const Admin = () => {
               )}
             </div>
           </div>
+
+          {/* Interests section */}
+          {(() => {
+            const rateioInterests = interests.filter((i) => i.rateio_id === selectedRateio.id);
+            if (rateioInterests.length === 0) return null;
+            return (
+              <div className="bg-card border border-border rounded-xl shadow-md overflow-hidden">
+                <div className="p-4 border-b border-border">
+                  <h2 className="text-lg font-heading font-semibold text-foreground">
+                    Interessados ({rateioInterests.length})
+                  </h2>
+                </div>
+                <div className="divide-y divide-border">
+                  {rateioInterests.map((i) => (
+                    <div key={i.id} className="p-4 flex items-center justify-between">
+                      <div>
+                        <p className="font-medium text-foreground">{i.name}</p>
+                        <p className="text-xs text-muted-foreground">{i.email} · {i.phone}</p>
+                        <p className="text-xs text-muted-foreground">{new Date(i.created_at).toLocaleDateString("pt-BR")}</p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {i.status === "approved" ? (
+                          <span className="text-xs text-success font-medium flex items-center gap-1"><CheckCircle className="w-3.5 h-3.5" /> Aprovado</span>
+                        ) : i.status === "rejected" ? (
+                          <span className="text-xs text-destructive font-medium">Rejeitado</span>
+                        ) : (
+                          <>
+                            <Button size="sm" onClick={() => approveInterest(i.id)}>Aprovar</Button>
+                            <Button size="sm" variant="ghost" className="text-destructive" onClick={() => rejectInterest(i.id)}>Rejeitar</Button>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          })()}
         </main>
       </div>
     );
