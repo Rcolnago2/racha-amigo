@@ -1,8 +1,9 @@
-import { useState, useMemo } from "react";
+import { useState, useEffect } from "react";
 import ProductCard from "@/components/ProductCard";
 import ParticipantForm from "@/components/ParticipantForm";
 import ParticipantList, { type Participant } from "@/components/ParticipantList";
 import ProductSettings from "@/components/ProductSettings";
+import { supabase } from "@/integrations/supabase/client";
 
 const Index = () => {
   const [participants, setParticipants] = useState<Participant[]>([]);
@@ -17,14 +18,24 @@ const Index = () => {
   const usedPercent = participants.reduce((s, p) => s + p.percent, 0);
   const remainingPercent = 100 - usedPercent;
 
-  const addParticipant = (name: string, percent: number) => {
-    setParticipants((prev) => [
-      ...prev,
-      { id: crypto.randomUUID(), name, percent },
-    ]);
+  // Load participants from database on mount
+  useEffect(() => {
+    const loadParticipants = async () => {
+      const { data } = await supabase
+        .from("participants")
+        .select("id, name, email, phone, percent")
+        .order("created_at", { ascending: true });
+      if (data) setParticipants(data);
+    };
+    loadParticipants();
+  }, []);
+
+  const addParticipant = (participant: Participant) => {
+    setParticipants((prev) => [...prev, participant]);
   };
 
-  const removeParticipant = (id: string) => {
+  const removeParticipant = async (id: string) => {
+    await supabase.from("participants").delete().eq("id", id);
     setParticipants((prev) => prev.filter((p) => p.id !== id));
   };
 
