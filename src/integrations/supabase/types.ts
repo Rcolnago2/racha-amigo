@@ -67,6 +67,44 @@ export type Database = {
           },
         ]
       }
+      rateio_interests: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          name: string
+          phone: string
+          rateio_id: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          name: string
+          phone: string
+          rateio_id: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          name?: string
+          phone?: string
+          rateio_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rateio_interests_rateio_id_fkey"
+            columns: ["rateio_id"]
+            isOneToOne: false
+            referencedRelation: "rateios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       rateios: {
         Row: {
           admin_fee_percent: number

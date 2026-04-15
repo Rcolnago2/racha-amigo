@@ -44,11 +44,22 @@ interface Participant {
   rateio_id: string | null;
 }
 
+interface Interest {
+  id: string;
+  rateio_id: string;
+  name: string;
+  email: string;
+  phone: string;
+  status: string;
+  created_at: string;
+}
+
 const Admin = () => {
   const [authenticated, setAuthenticated] = useState(false);
   const [password, setPassword] = useState("");
   const [rateios, setRateios] = useState<Rateio[]>([]);
   const [participants, setParticipants] = useState<Participant[]>([]);
+  const [interests, setInterests] = useState<Interest[]>([]);
   const [view, setView] = useState<"list" | "create" | "detail" | "edit">("list");
   const [selectedRateio, setSelectedRateio] = useState<Rateio | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -76,12 +87,26 @@ const Admin = () => {
   }, [authenticated]);
 
   const loadData = async () => {
-    const [rRes, pRes] = await Promise.all([
+    const [rRes, pRes, iRes] = await Promise.all([
       supabase.from("rateios").select("*").order("created_at", { ascending: false }),
       supabase.from("participants").select("*").order("created_at", { ascending: true }),
+      supabase.from("rateio_interests").select("*").order("created_at", { ascending: false }),
     ]);
     if (rRes.data) setRateios(rRes.data);
     if (pRes.data) setParticipants(pRes.data);
+    if (iRes.data) setInterests(iRes.data as Interest[]);
+  };
+
+  const approveInterest = async (id: string) => {
+    await supabase.from("rateio_interests").update({ status: "approved" }).eq("id", id);
+    setInterests((prev) => prev.map((i) => (i.id === id ? { ...i, status: "approved" } : i)));
+    toast({ title: "Interesse aprovado ✅" });
+  };
+
+  const rejectInterest = async (id: string) => {
+    await supabase.from("rateio_interests").update({ status: "rejected" }).eq("id", id);
+    setInterests((prev) => prev.map((i) => (i.id === id ? { ...i, status: "rejected" } : i)));
+    toast({ title: "Interesse rejeitado" });
   };
 
   const createRateio = async (e: React.FormEvent) => {
@@ -515,6 +540,44 @@ const Admin = () => {
               )}
             </div>
           </div>
+
+          {/* Interests section */}
+          {(() => {
+            const rateioInterests = interests.filter((i) => i.rateio_id === selectedRateio.id);
+            if (rateioInterests.length === 0) return null;
+            return (
+              <div className="bg-card border border-border rounded-xl shadow-md overflow-hidden">
+                <div className="p-4 border-b border-border">
+                  <h2 className="text-lg font-heading font-semibold text-foreground">
+                    Interessados ({rateioInterests.length})
+                  </h2>
+                </div>
+                <div className="divide-y divide-border">
+                  {rateioInterests.map((i) => (
+                    <div key={i.id} className="p-4 flex items-center justify-between">
+                      <div>
+                        <p className="font-medium text-foreground">{i.name}</p>
+                        <p className="text-xs text-muted-foreground">{i.email} · {i.phone}</p>
+                        <p className="text-xs text-muted-foreground">{new Date(i.created_at).toLocaleDateString("pt-BR")}</p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {i.status === "approved" ? (
+                          <span className="text-xs text-success font-medium flex items-center gap-1"><CheckCircle className="w-3.5 h-3.5" /> Aprovado</span>
+                        ) : i.status === "rejected" ? (
+                          <span className="text-xs text-destructive font-medium">Rejeitado</span>
+                        ) : (
+                          <>
+                            <Button size="sm" onClick={() => approveInterest(i.id)}>Aprovar</Button>
+                            <Button size="sm" variant="ghost" className="text-destructive" onClick={() => rejectInterest(i.id)}>Rejeitar</Button>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          })()}
         </main>
       </div>
     );

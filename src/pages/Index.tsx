@@ -1,7 +1,13 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { ChevronRight, Info } from "lucide-react";
+import { ChevronRight, Info, Heart, Loader2, CheckCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { toast } from "@/hooks/use-toast";
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle,
+} from "@/components/ui/dialog";
 
 interface Rateio {
   id: string;
@@ -20,6 +26,10 @@ interface Rateio {
 
 const Index = () => {
   const [rateios, setRateios] = useState<Rateio[]>([]);
+  const [interestRateio, setInterestRateio] = useState<Rateio | null>(null);
+  const [interestForm, setInterestForm] = useState({ name: "", email: "", phone: "" });
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -33,6 +43,31 @@ const Index = () => {
     };
     load();
   }, []);
+
+  const submitInterest = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!interestRateio) return;
+    if (!interestForm.name.trim() || !interestForm.email.includes("@") || interestForm.phone.length < 10) {
+      toast({ title: "Preencha todos os campos corretamente", variant: "destructive" });
+      return;
+    }
+    setSubmitting(true);
+    try {
+      const { error } = await supabase.from("rateio_interests").insert({
+        rateio_id: interestRateio.id,
+        name: interestForm.name.trim(),
+        email: interestForm.email.trim(),
+        phone: interestForm.phone.trim(),
+      });
+      if (error) throw error;
+      setSubmitted(true);
+      setInterestForm({ name: "", email: "", phone: "" });
+    } catch {
+      toast({ title: "Erro ao enviar interesse", variant: "destructive" });
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -65,16 +100,41 @@ const Index = () => {
                 return (
                   <div
                     key={r.id}
-                    className="bg-card border border-border rounded-xl shadow-md overflow-hidden opacity-75"
+                    className="bg-card border border-border rounded-xl shadow-md overflow-hidden"
                   >
-                    <div className="flex items-center p-4 gap-3">
-                      <Info className="w-5 h-5 text-primary shrink-0" />
-                      <div className="min-w-0">
-                        <h3 className="font-heading font-bold text-foreground text-lg">Rateio Exclusivo</h3>
-                        <p className="text-sm text-muted-foreground">
-                          Você precisa conhecer o promotor desse rateio para acessar essa oportunidade e pedir o link exato.
+                    <div className="flex">
+                      {r.photo_url && (
+                        <div className="w-32 h-32 shrink-0">
+                          <img src={r.photo_url} alt={r.title} className="w-full h-full object-cover" />
+                        </div>
+                      )}
+                      <div className="flex-1 p-4">
+                        <div className="min-w-0">
+                          <h3 className="font-heading font-bold text-foreground text-lg truncate">{r.title}</h3>
+                          {r.description && (
+                            <p className="text-sm text-muted-foreground line-clamp-2">{r.description}</p>
+                          )}
+                          <div className="flex gap-3 mt-2 text-xs text-muted-foreground">
+                            <span>{r.total_quantity} {unitLabel}</span>
+                            <span>R$ {total.toFixed(2).replace(".", ",")}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="px-4 pb-4 space-y-3">
+                      <div className="flex items-start gap-2 bg-muted/50 rounded-lg p-3 border border-border">
+                        <Info className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+                        <p className="text-xs text-muted-foreground">
+                          Rateio exclusivo — você precisa conhecer o promotor para acessar. Demonstre interesse abaixo e aguarde aprovação.
                         </p>
                       </div>
+                      <Button
+                        variant="outline"
+                        className="w-full gap-2"
+                        onClick={() => { setInterestRateio(r); setSubmitted(false); }}
+                      >
+                        <Heart className="w-4 h-4" /> Estou interessado nesse rateio
+                      </Button>
                     </div>
                   </div>
                 );
@@ -112,6 +172,44 @@ const Index = () => {
           </div>
         )}
       </main>
+
+      {/* Interest Modal */}
+      <Dialog open={!!interestRateio} onOpenChange={() => setInterestRateio(null)}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="font-heading text-center">
+              {submitted ? "Interesse enviado! 🎉" : `Interesse: ${interestRateio?.title}`}
+            </DialogTitle>
+          </DialogHeader>
+          {submitted ? (
+            <div className="text-center space-y-4 py-4">
+              <CheckCircle className="w-12 h-12 text-success mx-auto" />
+              <p className="text-sm text-muted-foreground">
+                Seu interesse foi registrado. O promotor do rateio vai analisar e entrar em contato se você for aprovado.
+              </p>
+              <Button onClick={() => setInterestRateio(null)} className="w-full">Fechar</Button>
+            </div>
+          ) : (
+            <form onSubmit={submitInterest} className="space-y-4">
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-foreground">Seu nome</label>
+                <Input value={interestForm.name} onChange={(e) => setInterestForm({ ...interestForm, name: e.target.value })} placeholder="Ex: Maria" className="bg-background" />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-foreground">Email</label>
+                <Input type="email" value={interestForm.email} onChange={(e) => setInterestForm({ ...interestForm, email: e.target.value })} placeholder="maria@email.com" className="bg-background" />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-foreground">Telefone</label>
+                <Input type="tel" value={interestForm.phone} onChange={(e) => setInterestForm({ ...interestForm, phone: e.target.value })} placeholder="(11) 99999-9999" className="bg-background" />
+              </div>
+              <Button type="submit" className="w-full" disabled={submitting}>
+                {submitting ? <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Enviando...</> : "Enviar interesse"}
+              </Button>
+            </form>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
