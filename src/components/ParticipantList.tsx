@@ -75,14 +75,14 @@ const ParticipantList = ({ participants, totalPrice, totalWeight, unitLabel = "k
         </h2>
       </div>
       <div className="divide-y divide-border">
-        {participants.map((p) => {
+        {participants.map((p, index) => {
           const value = (p.percent / 100) * totalPrice;
           const weight = (p.percent / 100) * totalWeight;
           return (
             <div key={p.id} className="p-4 space-y-2">
               <div className="flex items-center justify-between">
                 <div className="flex-1 min-w-0">
-                  <p className="font-medium text-foreground">{maskName(p.name)}</p>
+                  <p className="font-medium text-foreground">Participante {index + 1}</p>
                   <p className="text-sm text-muted-foreground truncate">
                     {p.percent}% · R$ {value.toFixed(2).replace(".", ",")} · {weight.toFixed(2).replace(".", ",")} {unitLabel}
                   </p>
