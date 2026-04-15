@@ -27,6 +27,8 @@ interface Rateio {
   pix_merchant_name: string;
   status: string;
   created_at: string;
+  slug: string;
+  visibility: string;
 }
 
 interface Participant {
@@ -56,6 +58,7 @@ const Admin = () => {
     total_quantity: "5", price_per_unit: "90",
     admin_fee_percent: "5", pix_key: "rcolnago+magie@gmail.com",
     pix_merchant_name: "COMPRA COLETIVA",
+    slug: "", visibility: "public",
   });
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
@@ -95,6 +98,7 @@ const Admin = () => {
         photo_url = supabase.storage.from("rateio-photos").getPublicUrl(path).data.publicUrl;
       }
 
+      const slug = form.slug.trim() || form.title.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
       const { error } = await supabase.from("rateios").insert({
         title: form.title.trim(),
         description: form.description.trim() || null,
@@ -105,6 +109,8 @@ const Admin = () => {
         admin_fee_percent: Number(form.admin_fee_percent),
         pix_key: form.pix_key.trim(),
         pix_merchant_name: form.pix_merchant_name.trim(),
+        slug,
+        visibility: form.visibility,
       });
       if (error) throw error;
 
@@ -114,6 +120,7 @@ const Admin = () => {
         total_quantity: "5", price_per_unit: "90",
         admin_fee_percent: "5", pix_key: "rcolnago+magie@gmail.com",
         pix_merchant_name: "COMPRA COLETIVA",
+        slug: "", visibility: "public",
       });
       setPhotoFile(null);
       await loadData();
