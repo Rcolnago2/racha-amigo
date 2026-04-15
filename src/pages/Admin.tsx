@@ -27,6 +27,8 @@ interface Rateio {
   pix_merchant_name: string;
   status: string;
   created_at: string;
+  slug: string;
+  visibility: string;
 }
 
 interface Participant {
@@ -56,6 +58,7 @@ const Admin = () => {
     total_quantity: "5", price_per_unit: "90",
     admin_fee_percent: "5", pix_key: "rcolnago+magie@gmail.com",
     pix_merchant_name: "COMPRA COLETIVA",
+    slug: "", visibility: "public",
   });
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
@@ -95,6 +98,7 @@ const Admin = () => {
         photo_url = supabase.storage.from("rateio-photos").getPublicUrl(path).data.publicUrl;
       }
 
+      const slug = form.slug.trim() || form.title.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
       const { error } = await supabase.from("rateios").insert({
         title: form.title.trim(),
         description: form.description.trim() || null,
@@ -105,6 +109,8 @@ const Admin = () => {
         admin_fee_percent: Number(form.admin_fee_percent),
         pix_key: form.pix_key.trim(),
         pix_merchant_name: form.pix_merchant_name.trim(),
+        slug,
+        visibility: form.visibility,
       });
       if (error) throw error;
 
@@ -114,6 +120,7 @@ const Admin = () => {
         total_quantity: "5", price_per_unit: "90",
         admin_fee_percent: "5", pix_key: "rcolnago+magie@gmail.com",
         pix_merchant_name: "COMPRA COLETIVA",
+        slug: "", visibility: "public",
       });
       setPhotoFile(null);
       await loadData();
@@ -217,6 +224,24 @@ const Admin = () => {
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-foreground">Nome do beneficiário PIX</label>
               <Input value={form.pix_merchant_name} onChange={(e) => setForm({ ...form, pix_merchant_name: e.target.value })} placeholder="COMPRA COLETIVA" className="bg-background" />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-foreground">Slug (URL)</label>
+                <Input value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "") })} placeholder="ex: queijo-canastra" className="bg-background" />
+                <p className="text-xs text-muted-foreground">Se vazio, será gerado pelo título</p>
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-foreground">Visibilidade</label>
+                <Select value={form.visibility} onValueChange={(v) => setForm({ ...form, visibility: v })}>
+                  <SelectTrigger className="bg-background"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="public">Público</SelectItem>
+                    <SelectItem value="secret">Secreto (só com link)</SelectItem>
+                    <SelectItem value="hidden">Oculto (não aparece)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
             <div className="bg-muted rounded-lg p-3 text-center">
@@ -372,12 +397,17 @@ const Admin = () => {
                       <div>
                         <h3 className="font-heading font-bold text-foreground">{r.title}</h3>
                         <p className="text-xs text-muted-foreground">
-                          {r.total_quantity} {unitLabel} · PIX: {r.pix_key}
+                          /{r.slug} · {r.total_quantity} {unitLabel} · PIX: {r.pix_key}
                         </p>
                       </div>
-                      <span className={`text-xs px-2 py-0.5 rounded-full ${r.status === "open" ? "bg-success/20 text-success" : "bg-muted text-muted-foreground"}`}>
-                        {r.status === "open" ? "Aberto" : r.status === "closed" ? "Fechado" : "Finalizado"}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className={`text-xs px-2 py-0.5 rounded-full ${r.visibility === "public" ? "bg-primary/20 text-primary" : r.visibility === "secret" ? "bg-warning/20 text-warning" : "bg-muted text-muted-foreground"}`}>
+                          {r.visibility === "public" ? "Público" : r.visibility === "secret" ? "Secreto" : "Oculto"}
+                        </span>
+                        <span className={`text-xs px-2 py-0.5 rounded-full ${r.status === "open" ? "bg-success/20 text-success" : "bg-muted text-muted-foreground"}`}>
+                          {r.status === "open" ? "Aberto" : r.status === "closed" ? "Fechado" : "Finalizado"}
+                        </span>
+                      </div>
                     </div>
                     <div className="flex gap-4 mt-2 text-xs text-muted-foreground">
                       <span>{rParts.length} participantes</span>

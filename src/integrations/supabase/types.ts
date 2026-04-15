@@ -77,10 +77,12 @@ export type Database = {
           pix_key: string
           pix_merchant_name: string
           price_per_unit: number
+          slug: string
           status: string
           title: string
           total_quantity: number
           unit_type: string
+          visibility: string
         }
         Insert: {
           admin_fee_percent?: number
@@ -91,10 +93,12 @@ export type Database = {
           pix_key?: string
           pix_merchant_name?: string
           price_per_unit?: number
+          slug: string
           status?: string
           title: string
           total_quantity?: number
           unit_type?: string
+          visibility?: string
         }
         Update: {
           admin_fee_percent?: number
@@ -105,10 +109,12 @@ export type Database = {
           pix_key?: string
           pix_merchant_name?: string
           price_per_unit?: number
+          slug?: string
           status?: string
           title?: string
           total_quantity?: number
           unit_type?: string
+          visibility?: string
         }
         Relationships: []
       }
