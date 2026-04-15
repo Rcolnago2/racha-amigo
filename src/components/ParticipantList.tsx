@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { Trash2 } from "lucide-react";
+import { Trash2, CheckCircle, Clock, AlertCircle } from "lucide-react";
+import ReceiptUpload from "@/components/ReceiptUpload";
 
 export interface Participant {
   id: string;
@@ -7,6 +8,8 @@ export interface Participant {
   email: string;
   phone: string;
   percent: number;
+  receipt_url?: string | null;
+  payment_confirmed?: boolean;
 }
 
 interface ParticipantListProps {
@@ -14,9 +17,10 @@ interface ParticipantListProps {
   totalPrice: number;
   totalWeight: number;
   onRemove: (id: string) => void;
+  onReceiptUploaded: (id: string, url: string) => void;
 }
 
-const ParticipantList = ({ participants, totalPrice, totalWeight, onRemove }: ParticipantListProps) => {
+const ParticipantList = ({ participants, totalPrice, totalWeight, onRemove, onReceiptUploaded }: ParticipantListProps) => {
   if (participants.length === 0) {
     return (
       <div className="bg-card border border-border rounded-xl p-6 shadow-md text-center">
@@ -37,22 +41,46 @@ const ParticipantList = ({ participants, totalPrice, totalWeight, onRemove }: Pa
           const value = (p.percent / 100) * totalPrice;
           const weight = (p.percent / 100) * totalWeight;
           return (
-            <div key={p.id} className="p-4 flex items-center justify-between hover:bg-muted/50 transition-colors">
-              <div className="flex-1 min-w-0">
-                <p className="font-medium text-foreground">{p.name}</p>
-                <p className="text-sm text-muted-foreground truncate">
-                  {p.percent}% · R$ {value.toFixed(2).replace('.', ',')} · {weight.toFixed(2).replace('.', ',')} kg
-                </p>
-                <p className="text-xs text-muted-foreground truncate">{p.email} · {p.phone}</p>
+            <div key={p.id} className="p-4 space-y-2">
+              <div className="flex items-center justify-between">
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium text-foreground">{p.name}</p>
+                  <p className="text-sm text-muted-foreground truncate">
+                    {p.percent}% · R$ {value.toFixed(2).replace('.', ',')} · {weight.toFixed(2).replace('.', ',')} kg
+                  </p>
+                  <p className="text-xs text-muted-foreground truncate">{p.email} · {p.phone}</p>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => onRemove(p.id)}
+                  className="text-muted-foreground hover:text-destructive shrink-0"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </Button>
               </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => onRemove(p.id)}
-                className="text-muted-foreground hover:text-destructive shrink-0"
-              >
-                <Trash2 className="w-4 h-4" />
-              </Button>
+
+              {/* Payment status */}
+              <div className="flex items-center justify-between">
+                {p.payment_confirmed ? (
+                  <span className="flex items-center gap-1.5 text-xs text-success">
+                    <CheckCircle className="w-3.5 h-3.5" />
+                    Pagamento confirmado ✅
+                  </span>
+                ) : p.receipt_url ? (
+                  <span className="flex items-center gap-1.5 text-xs text-primary">
+                    <Clock className="w-3.5 h-3.5" />
+                    Aguardando confirmação do admin
+                  </span>
+                ) : (
+                  <ReceiptUpload
+                    participantId={p.id}
+                    participantName={p.name}
+                    existingUrl={p.receipt_url}
+                    onUploaded={onReceiptUploaded}
+                  />
+                )}
+              </div>
             </div>
           );
         })}

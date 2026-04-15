@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import ProductCard from "@/components/ProductCard";
 import ParticipantForm from "@/components/ParticipantForm";
-import ParticipantList, { type Participant } from "@/components/ParticipantList";
+import ParticipantList from "@/components/ParticipantList";
+import type { Participant } from "@/components/ParticipantList";
 import ProductSettings from "@/components/ProductSettings";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -23,7 +24,7 @@ const Index = () => {
     const loadParticipants = async () => {
       const { data } = await supabase
         .from("participants")
-        .select("id, name, email, phone, percent")
+        .select("id, name, email, phone, percent, receipt_url, payment_confirmed")
         .order("created_at", { ascending: true });
       if (data) setParticipants(data);
     };
@@ -37,6 +38,12 @@ const Index = () => {
   const removeParticipant = async (id: string) => {
     await supabase.from("participants").delete().eq("id", id);
     setParticipants((prev) => prev.filter((p) => p.id !== id));
+  };
+
+  const handleReceiptUploaded = (id: string, url: string) => {
+    setParticipants((prev) =>
+      prev.map((p) => (p.id === id ? { ...p, receipt_url: url } : p))
+    );
   };
 
   return (
@@ -81,6 +88,7 @@ const Index = () => {
             totalPrice={totalPrice}
             totalWeight={totalWeight}
             onRemove={removeParticipant}
+            onReceiptUploaded={handleReceiptUploaded}
           />
         </div>
       </main>
