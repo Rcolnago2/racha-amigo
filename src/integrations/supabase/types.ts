@@ -24,6 +24,7 @@ export type Database = {
           percent: number
           phone: string
           product_name: string
+          receipt_url: string | null
           value_brl: number
           weight_kg: number
         }
@@ -36,6 +37,7 @@ export type Database = {
           percent: number
           phone: string
           product_name?: string
+          receipt_url?: string | null
           value_brl: number
           weight_kg: number
         }
@@ -48,6 +50,7 @@ export type Database = {
           percent?: number
           phone?: string
           product_name?: string
+          receipt_url?: string | null
           value_brl?: number
           weight_kg?: number
         }
