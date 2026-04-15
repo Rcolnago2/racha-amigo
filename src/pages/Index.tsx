@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Plus, Users, ChevronRight } from "lucide-react";
+import { ChevronRight, Info } from "lucide-react";
 
 interface Rateio {
   id: string;
@@ -14,6 +14,8 @@ interface Rateio {
   admin_fee_percent: number;
   status: string;
   created_at: string;
+  slug: string;
+  visibility: string;
 }
 
 const Index = () => {
@@ -25,6 +27,7 @@ const Index = () => {
         .from("rateios")
         .select("*")
         .eq("status", "open")
+        .in("visibility", ["public", "secret"])
         .order("created_at", { ascending: false });
       if (data) setRateios(data);
     };
@@ -56,11 +59,31 @@ const Index = () => {
               const subtotal = r.total_quantity * r.price_per_unit;
               const total = subtotal * (1 + r.admin_fee_percent / 100);
               const unitLabel = r.unit_type === "kg" ? "kg" : r.unit_type === "litro" ? "L" : "un";
+              const isSecret = r.visibility === "secret";
+
+              if (isSecret) {
+                return (
+                  <div
+                    key={r.id}
+                    className="bg-card border border-border rounded-xl shadow-md overflow-hidden opacity-75"
+                  >
+                    <div className="flex items-center p-4 gap-3">
+                      <Info className="w-5 h-5 text-primary shrink-0" />
+                      <div className="min-w-0">
+                        <h3 className="font-heading font-bold text-foreground text-lg">Rateio Exclusivo</h3>
+                        <p className="text-sm text-muted-foreground">
+                          Você precisa conhecer o promotor desse rateio para acessar essa oportunidade e pedir o link exato.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
 
               return (
                 <Link
                   key={r.id}
-                  to={`/rateio/${r.id}`}
+                  to={`/r/${r.slug}`}
                   className="block bg-card border border-border rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow"
                 >
                   <div className="flex">
