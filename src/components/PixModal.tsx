@@ -6,26 +6,18 @@ import { toast } from "@/hooks/use-toast";
 import { Copy, Check } from "lucide-react";
 import { useState } from "react";
 
-const PIX_KEY = "rcolnago+magie@gmail.com";
-const MERCHANT_NAME = "COMPRA COLETIVA QUEIJO";
-const MERCHANT_CITY = "SAO PAULO";
-
 interface PixModalProps {
   value: number;
   participantName: string;
+  pixKey: string;
+  merchantName: string;
   onClose: () => void;
 }
 
-const PixModal = ({ value, participantName, onClose }: PixModalProps) => {
+const PixModal = ({ value, participantName, pixKey, merchantName, onClose }: PixModalProps) => {
   const [copied, setCopied] = useState(false);
 
-  const pixPayload = generatePixPayload(
-    PIX_KEY,
-    MERCHANT_NAME,
-    MERCHANT_CITY,
-    value,
-    "QUEIJO CANASTRA"
-  );
+  const pixPayload = generatePixPayload(pixKey, merchantName, "SAO PAULO", value, "RATEIO");
 
   const handleCopy = async () => {
     try {
@@ -56,11 +48,9 @@ const PixModal = ({ value, participantName, onClose }: PixModalProps) => {
 
           <div className="space-y-2">
             <p className="text-2xl font-heading font-bold text-foreground">
-              R$ {value.toFixed(2).replace('.', ',')}
+              R$ {value.toFixed(2).replace(".", ",")}
             </p>
-            <p className="text-xs text-muted-foreground">
-              Chave PIX: {PIX_KEY}
-            </p>
+            <p className="text-xs text-muted-foreground">Chave PIX: {pixKey}</p>
           </div>
 
           <Button onClick={handleCopy} variant="outline" className="w-full gap-2">
@@ -68,9 +58,7 @@ const PixModal = ({ value, participantName, onClose }: PixModalProps) => {
             {copied ? "Copiado!" : "Copiar código PIX"}
           </Button>
 
-          <Button onClick={onClose} className="w-full">
-            Fechar
-          </Button>
+          <Button onClick={onClose} className="w-full">Fechar</Button>
         </div>
       </DialogContent>
     </Dialog>
