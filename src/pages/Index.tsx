@@ -45,7 +45,6 @@ const Index = () => {
       prev.map((p) => (p.id === id ? { ...p, receipt_url: url } : p))
     );
   };
-  };
 
   return (
     <div className="min-h-screen bg-background">
