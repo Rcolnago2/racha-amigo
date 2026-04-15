@@ -404,10 +404,10 @@ const Admin = () => {
                         <span className={`text-xs px-2 py-0.5 rounded-full ${r.visibility === "public" ? "bg-primary/20 text-primary" : r.visibility === "secret" ? "bg-warning/20 text-warning" : "bg-muted text-muted-foreground"}`}>
                           {r.visibility === "public" ? "Público" : r.visibility === "secret" ? "Secreto" : "Oculto"}
                         </span>
+                        <span className={`text-xs px-2 py-0.5 rounded-full ${r.status === "open" ? "bg-success/20 text-success" : "bg-muted text-muted-foreground"}`}>
+                          {r.status === "open" ? "Aberto" : r.status === "closed" ? "Fechado" : "Finalizado"}
+                        </span>
                       </div>
-                      <span className={`text-xs px-2 py-0.5 rounded-full ${r.status === "open" ? "bg-success/20 text-success" : "bg-muted text-muted-foreground"}`}>
-                        {r.status === "open" ? "Aberto" : r.status === "closed" ? "Fechado" : "Finalizado"}
-                      </span>
                     </div>
                     <div className="flex gap-4 mt-2 text-xs text-muted-foreground">
                       <span>{rParts.length} participantes</span>
