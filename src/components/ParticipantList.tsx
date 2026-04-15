@@ -4,6 +4,8 @@ import { Trash2 } from "lucide-react";
 export interface Participant {
   id: string;
   name: string;
+  email: string;
+  phone: string;
   percent: number;
 }
 
@@ -36,17 +38,18 @@ const ParticipantList = ({ participants, totalPrice, totalWeight, onRemove }: Pa
           const weight = (p.percent / 100) * totalWeight;
           return (
             <div key={p.id} className="p-4 flex items-center justify-between hover:bg-muted/50 transition-colors">
-              <div className="flex-1">
+              <div className="flex-1 min-w-0">
                 <p className="font-medium text-foreground">{p.name}</p>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-muted-foreground truncate">
                   {p.percent}% · R$ {value.toFixed(2).replace('.', ',')} · {weight.toFixed(2).replace('.', ',')} kg
                 </p>
+                <p className="text-xs text-muted-foreground truncate">{p.email} · {p.phone}</p>
               </div>
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => onRemove(p.id)}
-                className="text-muted-foreground hover:text-destructive"
+                className="text-muted-foreground hover:text-destructive shrink-0"
               >
                 <Trash2 className="w-4 h-4" />
               </Button>
