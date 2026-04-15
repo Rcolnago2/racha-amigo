@@ -49,8 +49,9 @@ const Admin = () => {
   const [password, setPassword] = useState("");
   const [rateios, setRateios] = useState<Rateio[]>([]);
   const [participants, setParticipants] = useState<Participant[]>([]);
-  const [view, setView] = useState<"list" | "create" | "detail">("list");
+  const [view, setView] = useState<"list" | "create" | "detail" | "edit">("list");
   const [selectedRateio, setSelectedRateio] = useState<Rateio | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   // Create form state
   const [form, setForm] = useState({
