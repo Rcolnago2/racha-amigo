@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { ChevronRight, Info, Heart, Loader2, CheckCircle } from "lucide-react";
+import { ChevronRight, Info, Heart, Loader2, CheckCircle, MapPin, Building2, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
@@ -71,17 +71,25 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-10">
-        <div className="container max-w-3xl mx-auto px-4 py-4 flex items-center gap-3">
-          <span className="text-2xl">🧀</span>
-          <h1 className="text-xl font-heading font-bold text-foreground">Compra Coletiva</h1>
+      <header className="border-b border-border bg-white sticky top-0 z-10 shadow-sm">
+        <div className="container max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Building2 className="w-8 h-8 text-primary" />
+            <h1 className="text-xl font-bold text-slate-900 tracking-tight">Portal Corporativo Rodoviário</h1>
+          </div>
+          <nav className="hidden md:flex items-center gap-6">
+            <span className="text-sm font-medium text-slate-600">Terceira Ponte</span>
+            <span className="text-sm font-medium text-slate-600">Acessos Vitória</span>
+            <span className="text-sm font-medium text-slate-600">Acessos VV</span>
+            <span className="text-sm font-medium text-slate-600">Rodosol</span>
+          </nav>
         </div>
       </header>
 
-      <main className="container max-w-3xl mx-auto px-4 py-8 space-y-6">
-        <div className="text-center space-y-2">
-          <h2 className="text-2xl font-heading font-bold text-foreground">Rateios Abertos</h2>
-          <p className="text-muted-foreground">Escolha um rateio para participar</p>
+      <main className="container max-w-5xl mx-auto px-4 py-12 space-y-8">
+        <div className="space-y-3">
+          <h2 className="text-3xl font-extrabold text-slate-900">Oportunidades e Rateios</h2>
+          <p className="text-lg text-slate-500 max-w-2xl">Gerencie e participe de rateios logísticos e operacionais na região metropolitana.</p>
         </div>
 
         {rateios.length === 0 ? (
