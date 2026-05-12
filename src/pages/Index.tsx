@@ -97,7 +97,7 @@ const Index = () => {
             <p className="text-muted-foreground">Nenhum rateio aberto no momento.</p>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {rateios.map((r) => {
               const subtotal = r.total_quantity * r.price_per_unit;
               const total = subtotal * (1 + r.admin_fee_percent / 100);
@@ -108,41 +108,48 @@ const Index = () => {
                 return (
                   <div
                     key={r.id}
-                    className="bg-card border border-border rounded-xl shadow-md overflow-hidden"
+                    className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden flex flex-col group"
                   >
-                    <div className="flex">
-                      {r.photo_url && (
-                        <div className="w-32 h-32 shrink-0">
-                          <img src={r.photo_url} alt={r.title} className="w-full h-full object-cover" />
+                    <div className="relative h-48 w-full bg-slate-100 overflow-hidden">
+                      {r.photo_url ? (
+                        <img src={r.photo_url} alt={r.title} className="w-full h-full object-cover transition-transform group-hover:scale-105" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-slate-300">
+                          <Building2 className="w-12 h-12" />
                         </div>
                       )}
-                      <div className="flex-1 p-4">
-                        <div className="min-w-0">
-                          <h3 className="font-heading font-bold text-foreground text-lg truncate">{r.title}</h3>
-                          {r.description && (
-                            <p className="text-sm text-muted-foreground line-clamp-2">{r.description}</p>
-                          )}
-                          <div className="flex gap-3 mt-2 text-xs text-muted-foreground">
-                            <span>{r.total_quantity} {unitLabel}</span>
-                            <span>R$ {total.toFixed(2).replace(".", ",")}</span>
-                          </div>
-                        </div>
+                      <div className="absolute top-3 left-3">
+                        <span className="bg-slate-900/80 backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded">
+                          Exclusivo
+                        </span>
                       </div>
                     </div>
-                    <div className="px-4 pb-4 space-y-3">
-                      <div className="flex items-start gap-2 bg-muted/50 rounded-lg p-3 border border-border">
-                        <Info className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-                        <p className="text-xs text-muted-foreground">
-                          Rateio exclusivo — você precisa conhecer o promotor para acessar. Demonstre interesse abaixo e aguarde aprovação.
-                        </p>
+                    <div className="p-5 flex-1 flex flex-col">
+                      <div className="mb-4">
+                        <h3 className="font-bold text-slate-900 text-lg mb-1 leading-tight">{r.title}</h3>
+                        {r.description && (
+                          <p className="text-sm text-slate-500 line-clamp-2">{r.description}</p>
+                        )}
                       </div>
-                      <Button
-                        variant="outline"
-                        className="w-full gap-2"
-                        onClick={() => { setInterestRateio(r); setSubmitted(false); }}
-                      >
-                        <Heart className="w-4 h-4" /> Estou interessado nesse rateio
-                      </Button>
+                      <div className="mt-auto space-y-4">
+                        <div className="flex items-center justify-between text-sm py-3 border-y border-slate-50">
+                          <span className="text-slate-500">Volume Total</span>
+                          <span className="font-semibold text-slate-900">{r.total_quantity} {unitLabel}</span>
+                        </div>
+                        <div className="flex items-start gap-2 bg-slate-50 rounded-lg p-3 border border-slate-100">
+                          <Shield className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+                          <p className="text-[11px] text-slate-600 leading-tight">
+                            Este rateio requer autorização prévia do promotor. Solicite acesso abaixo.
+                          </p>
+                        </div>
+                        <Button
+                          variant="outline"
+                          className="w-full h-10 text-sm font-semibold border-slate-200 hover:bg-slate-50"
+                          onClick={() => { setInterestRateio(r); setSubmitted(false); }}
+                        >
+                          Manifestar Interesse
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 );
@@ -152,26 +159,44 @@ const Index = () => {
                 <Link
                   key={r.id}
                   to={`/r/${r.slug}`}
-                  className="block bg-card border border-border rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+                  className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden flex flex-col group hover:shadow-md hover:border-primary/20 transition-all"
                 >
-                  <div className="flex">
-                    {r.photo_url && (
-                      <div className="w-32 h-32 shrink-0">
-                        <img src={r.photo_url} alt={r.title} className="w-full h-full object-cover" />
+                  <div className="relative h-48 w-full bg-slate-100 overflow-hidden">
+                    {r.photo_url ? (
+                      <img src={r.photo_url} alt={r.title} className="w-full h-full object-cover transition-transform group-hover:scale-105" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-slate-300">
+                        <Building2 className="w-12 h-12" />
                       </div>
                     )}
-                    <div className="flex-1 p-4 flex items-center justify-between">
-                      <div className="min-w-0">
-                        <h3 className="font-heading font-bold text-foreground text-lg truncate">{r.title}</h3>
-                        {r.description && (
-                          <p className="text-sm text-muted-foreground line-clamp-2">{r.description}</p>
-                        )}
-                        <div className="flex gap-3 mt-2 text-xs text-muted-foreground">
-                          <span>{r.total_quantity} {unitLabel}</span>
-                          <span>R$ {total.toFixed(2).replace(".", ",")}</span>
-                        </div>
+                    <div className="absolute top-3 left-3">
+                      <span className="bg-primary text-white text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded">
+                        Aberto
+                      </span>
+                    </div>
+                  </div>
+                  <div className="p-5 flex-1 flex flex-col">
+                    <div className="mb-4">
+                      <h3 className="font-bold text-slate-900 text-lg mb-1 leading-tight group-hover:text-primary transition-colors">{r.title}</h3>
+                      {r.description && (
+                        <p className="text-sm text-slate-500 line-clamp-2">{r.description}</p>
+                      )}
+                    </div>
+                    <div className="mt-auto space-y-3">
+                      <div className="flex items-center justify-between text-sm pb-3 border-b border-slate-50">
+                        <span className="text-slate-500">Valor Estimado</span>
+                        <span className="font-bold text-slate-900 text-base">R$ {total.toFixed(2).replace(".", ",")}</span>
                       </div>
-                      <ChevronRight className="w-5 h-5 text-muted-foreground shrink-0" />
+                      <div className="flex items-center justify-between text-xs text-slate-400">
+                        <div className="flex items-center gap-1">
+                          <MapPin className="w-3 h-3" />
+                          <span>ES · Terceira Ponte</span>
+                        </div>
+                        <span>{r.total_quantity} {unitLabel}</span>
+                      </div>
+                      <Button className="w-full h-10 text-sm font-semibold bg-primary hover:bg-primary/90">
+                        Acessar Detalhes
+                      </Button>
                     </div>
                   </div>
                 </Link>
