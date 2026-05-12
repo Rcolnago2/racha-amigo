@@ -94,13 +94,13 @@ const RateioDetail = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b border-border bg-white sticky top-0 z-10 shadow-sm">
-        <div className="container max-w-5xl mx-auto px-4 py-4 flex items-center gap-4">
-          <Link to="/" className="text-slate-400 hover:text-slate-600 transition-colors">
+      <header className="border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-10">
+        <div className="container max-w-3xl mx-auto px-4 py-4 flex items-center gap-3">
+          <Link to="/" className="text-muted-foreground hover:text-foreground">
             <ArrowLeft className="w-5 h-5" />
           </Link>
-          <div className="w-px h-6 bg-slate-200" />
-          <h1 className="text-lg font-bold text-slate-900 truncate tracking-tight">{rateio.title}</h1>
+          <span className="text-2xl">🧀</span>
+          <h1 className="text-xl font-heading font-bold text-foreground truncate">{rateio.title}</h1>
         </div>
       </header>
 
