@@ -19,7 +19,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import logoAsset from "@/assets/rateio-amigo-logo.png.asset.json";
+import logoImage from "@/assets/rateio-amigo-logo.webp";
 
 interface Rateio {
   id: string;
@@ -96,7 +96,7 @@ const Index = () => {
       <header className="sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur">
         <div className="mx-auto flex h-20 max-w-6xl items-center justify-between px-5 md:px-8">
           <a href="#inicio" aria-label="Rateio Amigo — início" className="flex items-center">
-            <img src={logoAsset.url} alt="Rateio Amigo" className="h-16 w-auto object-contain" />
+            <img src={logoImage} alt="Rateio Amigo" className="h-16 w-auto object-contain" />
           </a>
           <nav className="hidden items-center gap-7 md:flex" aria-label="Navegação principal">
             <a href="#como-funciona" className="text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground">Como funciona</a>
@@ -135,7 +135,7 @@ const Index = () => {
             <div className="relative mx-auto w-full max-w-md">
               <div className="absolute -left-5 top-12 h-24 w-3 rounded-full bg-accent" aria-hidden="true" />
               <div className="relative overflow-hidden rounded-lg border border-border bg-background p-7 shadow-xl">
-                <img src={logoAsset.url} alt="Rateio Amigo — juntos, você compra mais" className="mx-auto w-full max-w-xs object-contain" />
+                <img src={logoImage} alt="Rateio Amigo — juntos, você compra mais" className="mx-auto w-full max-w-xs object-contain" />
                 <div className="mt-5 grid grid-cols-3 gap-2 border-t border-border pt-5 text-center">
                   <div><p className="text-xl font-bold text-foreground">1</p><p className="text-xs text-muted-foreground">produto</p></div>
                   <div><p className="text-xl font-bold text-primary">1</p><p className="text-xs text-muted-foreground">grupo</p></div>
@@ -262,7 +262,7 @@ const Index = () => {
 
       <footer className="border-t border-border bg-background">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-5 py-8 sm:flex-row md:px-8">
-          <img src={logoAsset.url} alt="Rateio Amigo" className="h-14 w-auto object-contain" />
+          <img src={logoImage} alt="Rateio Amigo" className="h-14 w-auto object-contain" />
           <div className="flex items-center gap-6 text-xs text-muted-foreground"><span>Juntos, você compra mais</span><Link to="/admin" className="transition-colors hover:text-foreground">Acesso do promotor</Link></div>
         </div>
       </footer>
