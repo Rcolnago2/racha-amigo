@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowUpRight, Info, Heart, Loader2, CheckCircle, MapPinned } from "lucide-react";
+import { ChevronRight, Info, Heart, Loader2, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
@@ -39,16 +39,7 @@ const Index = () => {
         .eq("status", "open")
         .in("visibility", ["public", "secret"])
         .order("created_at", { ascending: false });
-      if (data) {
-        const allowedRateios = [
-          "terceira ponte",
-          "acessos terceira ponte vitoria",
-          "acessos terceira ponte vv",
-          "rodosol",
-        ];
-        const normalize = (value: string) => value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
-        setRateios(data.filter((rateio) => allowedRateios.includes(normalize(rateio.title))));
-      }
+      if (data) setRateios(data);
     };
     load();
   }, []);
@@ -80,26 +71,17 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b border-border bg-card sticky top-0 z-10">
-        <div className="container max-w-6xl mx-auto px-5 py-5 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-md bg-primary text-primary-foreground">
-              <MapPinned className="h-5 w-5" />
-            </div>
-            <div>
-              <h1 className="text-base font-heading font-bold uppercase tracking-[0.16em] text-foreground">Mobilidade ES</h1>
-              <p className="text-xs text-muted-foreground">Informações viárias corporativas</p>
-            </div>
-          </div>
-          <span className="hidden text-xs font-semibold uppercase tracking-[0.18em] text-primary sm:block">Painel de acessos</span>
+      <header className="border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-10">
+        <div className="container max-w-3xl mx-auto px-4 py-4 flex items-center gap-3">
+          <span className="text-2xl">🧀</span>
+          <h1 className="text-xl font-heading font-bold text-foreground">Compra Coletiva</h1>
         </div>
       </header>
 
-      <main className="container max-w-6xl mx-auto px-5 py-12 space-y-9">
-        <div className="max-w-2xl space-y-3 border-l-4 border-primary pl-5">
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Operações em destaque</p>
-          <h2 className="text-3xl font-heading font-bold tracking-tight text-foreground md:text-4xl">Terceira Ponte e acessos</h2>
-          <p className="text-muted-foreground">Consulte as condições e informações das oportunidades disponíveis.</p>
+      <main className="container max-w-3xl mx-auto px-4 py-8 space-y-6">
+        <div className="text-center space-y-2">
+          <h2 className="text-2xl font-heading font-bold text-foreground">Rateios Abertos</h2>
+          <p className="text-muted-foreground">Escolha um rateio para participar</p>
         </div>
 
         {rateios.length === 0 ? (
@@ -107,7 +89,7 @@ const Index = () => {
             <p className="text-muted-foreground">Nenhum rateio aberto no momento.</p>
           </div>
         ) : (
-          <div className="grid gap-5 md:grid-cols-2">
+          <div className="space-y-4">
             {rateios.map((r) => {
               const subtotal = r.total_quantity * r.price_per_unit;
               const total = subtotal * (1 + r.admin_fee_percent / 100);
@@ -118,18 +100,17 @@ const Index = () => {
                 return (
                   <div
                     key={r.id}
-                    className="bg-card border border-border rounded-md overflow-hidden shadow-sm"
+                    className="bg-card border border-border rounded-xl shadow-md overflow-hidden"
                   >
                     <div className="flex">
                       {r.photo_url && (
-                        <div className="w-36 h-40 shrink-0">
+                        <div className="w-32 h-32 shrink-0">
                           <img src={r.photo_url} alt={r.title} className="w-full h-full object-cover" />
                         </div>
                       )}
-                       <div className="flex-1 p-5">
+                      <div className="flex-1 p-4">
                         <div className="min-w-0">
-                           <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.18em] text-primary">Acesso exclusivo</p>
-                           <h3 className="font-heading font-bold text-foreground text-xl leading-tight">{r.title}</h3>
+                          <h3 className="font-heading font-bold text-foreground text-lg truncate">{r.title}</h3>
                           {r.description && (
                             <p className="text-sm text-muted-foreground line-clamp-2">{r.description}</p>
                           )}
@@ -141,7 +122,7 @@ const Index = () => {
                       </div>
                     </div>
                     <div className="px-4 pb-4 space-y-3">
-                       <div className="flex items-start gap-2 bg-secondary rounded-md p-3 border border-border">
+                      <div className="flex items-start gap-2 bg-muted/50 rounded-lg p-3 border border-border">
                         <Info className="w-4 h-4 text-primary shrink-0 mt-0.5" />
                         <p className="text-xs text-muted-foreground">
                           Rateio exclusivo — você precisa conhecer o promotor para acessar. Demonstre interesse abaixo e aguarde aprovação.
@@ -152,7 +133,7 @@ const Index = () => {
                         className="w-full gap-2"
                         onClick={() => { setInterestRateio(r); setSubmitted(false); }}
                       >
-                        <Heart className="w-4 h-4" /> Tenho interesse
+                        <Heart className="w-4 h-4" /> Estou interessado nesse rateio
                       </Button>
                     </div>
                   </div>
@@ -163,18 +144,17 @@ const Index = () => {
                 <Link
                   key={r.id}
                   to={`/r/${r.slug}`}
-                  className="group block bg-card border border-border rounded-md overflow-hidden shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary hover:shadow-md"
+                  className="block bg-card border border-border rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow"
                 >
                   <div className="flex">
                     {r.photo_url && (
-                       <div className="w-36 h-40 shrink-0">
+                      <div className="w-32 h-32 shrink-0">
                         <img src={r.photo_url} alt={r.title} className="w-full h-full object-cover" />
                       </div>
                     )}
-                     <div className="flex-1 p-5 flex items-center justify-between">
+                    <div className="flex-1 p-4 flex items-center justify-between">
                       <div className="min-w-0">
-                         <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.18em] text-primary">Disponível</p>
-                         <h3 className="font-heading font-bold text-foreground text-xl leading-tight">{r.title}</h3>
+                        <h3 className="font-heading font-bold text-foreground text-lg truncate">{r.title}</h3>
                         {r.description && (
                           <p className="text-sm text-muted-foreground line-clamp-2">{r.description}</p>
                         )}
@@ -183,7 +163,7 @@ const Index = () => {
                           <span>R$ {total.toFixed(2).replace(".", ",")}</span>
                         </div>
                       </div>
-                       <ArrowUpRight className="w-5 h-5 text-primary shrink-0 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                      <ChevronRight className="w-5 h-5 text-muted-foreground shrink-0" />
                     </div>
                   </div>
                 </Link>
