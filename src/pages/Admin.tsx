@@ -69,7 +69,7 @@ const Admin = () => {
     title: "", description: "", unit_type: "kg",
     total_quantity: "5", price_per_unit: "90",
     admin_fee_percent: "5", pix_key: "rcolnago+magie@gmail.com",
-    pix_merchant_name: "COMPRA COLETIVA",
+    pix_merchant_name: "RATEIO AMIGO",
     slug: "", visibility: "public",
   });
   const [photoFile, setPhotoFile] = useState<File | null>(null);
@@ -145,7 +145,7 @@ const Admin = () => {
         title: "", description: "", unit_type: "kg",
         total_quantity: "5", price_per_unit: "90",
         admin_fee_percent: "5", pix_key: "rcolnago+magie@gmail.com",
-        pix_merchant_name: "COMPRA COLETIVA",
+        pix_merchant_name: "RATEIO AMIGO",
         slug: "", visibility: "public",
       });
       setPhotoFile(null);
@@ -269,7 +269,7 @@ const Admin = () => {
           <form onSubmit={createRateio} className="bg-card border border-border rounded-xl p-6 shadow-md space-y-4">
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-foreground">Título *</label>
-              <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Ex: Queijo Canastra Artesanal" className="bg-background" />
+              <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Ex: Café especial em caixa" className="bg-background" />
             </div>
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-foreground">Descrição</label>
@@ -312,12 +312,12 @@ const Admin = () => {
             </div>
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-foreground">Nome do beneficiário PIX</label>
-              <Input value={form.pix_merchant_name} onChange={(e) => setForm({ ...form, pix_merchant_name: e.target.value })} placeholder="COMPRA COLETIVA" className="bg-background" />
+              <Input value={form.pix_merchant_name} onChange={(e) => setForm({ ...form, pix_merchant_name: e.target.value })} placeholder="RATEIO AMIGO" className="bg-background" />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <label className="text-sm font-medium text-foreground">Slug (URL)</label>
-                <Input value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "") })} placeholder="ex: queijo-canastra" className="bg-background" />
+                <Input value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "") })} placeholder="ex: cafe-especial" className="bg-background" />
                 <p className="text-xs text-muted-foreground">Se vazio, será gerado pelo título</p>
               </div>
               <div className="space-y-1.5">

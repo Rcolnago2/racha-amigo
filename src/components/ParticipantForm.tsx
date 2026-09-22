@@ -60,7 +60,7 @@ const ParticipantForm = ({
       onAdd({ id: data.id, name: data.name, email: data.email, phone: data.phone, percent: data.percent });
       setPixData({ value, name: name.trim(), pixKey, merchantName: pixMerchantName });
       setName(""); setEmail(""); setPhone(""); setPercent(10); setConfirmed(false);
-      toast({ title: "Participação registrada! 🧀" });
+      toast({ title: "Participação registrada!" });
     } catch (err) {
       console.error(err);
       toast({ title: "Erro ao registrar. Tente novamente.", variant: "destructive" });
