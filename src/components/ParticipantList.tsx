@@ -62,7 +62,7 @@ const ParticipantList = ({ participants, totalPrice, totalWeight, unitLabel = "k
   if (participants.length === 0) {
     return (
       <div className="bg-card border border-border rounded-xl p-6 shadow-md text-center">
-        <p className="text-muted-foreground font-body">Nenhum participante ainda. Seja o primeiro! 🧀</p>
+        <p className="text-muted-foreground font-body">Nenhum participante ainda. Seja o primeiro!</p>
       </div>
     );
   }

@@ -6,6 +6,7 @@ import ParticipantList from "@/components/ParticipantList";
 import type { Participant } from "@/components/ParticipantList";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft } from "lucide-react";
+import logoAsset from "@/assets/rateio-amigo-logo.png.asset.json";
 
 interface Rateio {
   id: string;
@@ -99,7 +100,7 @@ const RateioDetail = () => {
           <Link to="/" className="text-muted-foreground hover:text-foreground">
             <ArrowLeft className="w-5 h-5" />
           </Link>
-          <span className="text-2xl">🧀</span>
+          <img src={logoAsset.url} alt="Rateio Amigo" className="h-11 w-auto object-contain" />
           <h1 className="text-xl font-heading font-bold text-foreground truncate">{rateio.title}</h1>
         </div>
       </header>
