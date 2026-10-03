@@ -12,7 +12,6 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 
-const ADMIN_PASSWORD = "queijo2025";
 
 interface Rateio {
   id: string;
@@ -57,6 +56,9 @@ interface Interest {
 const Admin = () => {
   const [authenticated, setAuthenticated] = useState(false);
   const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [checking, setChecking] = useState(true);
   const [rateios, setRateios] = useState<Rateio[]>([]);
   const [participants, setParticipants] = useState<Participant[]>([]);
   const [interests, setInterests] = useState<Interest[]>([]);
@@ -75,10 +77,35 @@ const Admin = () => {
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const checkAdmin = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) { setAuthenticated(false); setChecking(false); return; }
+    const { data: isAdmin } = await supabase.rpc("claim_first_admin");
+    setAuthenticated(!!isAdmin);
+    if (!isAdmin) toast({ title: "Esta conta não tem acesso de administrador", variant: "destructive" });
+    setChecking(false);
+  };
+
+  useEffect(() => {
+    checkAdmin();
+    const { data: sub } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "SIGNED_IN" || event === "SIGNED_OUT") setTimeout(checkAdmin, 0);
+    });
+    return () => sub.subscription.unsubscribe();
+  }, []);
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === ADMIN_PASSWORD) setAuthenticated(true);
-    else toast({ title: "Senha incorreta", variant: "destructive" });
+    if (isSignUp) {
+      const { error } = await supabase.auth.signUp({
+        email, password, options: { emailRedirectTo: `${window.location.origin}/admin` },
+      });
+      if (error) toast({ title: error.message, variant: "destructive" });
+      else toast({ title: "Conta criada! Confirme seu email para entrar." });
+      return;
+    }
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) toast({ title: "Email ou senha incorretos", variant: "destructive" });
   };
 
   useEffect(() => {
@@ -237,6 +264,10 @@ const Admin = () => {
     }
   };
 
+  if (checking) {
+    return <div className="min-h-screen bg-background flex items-center justify-center"><p className="text-muted-foreground">Carregando...</p></div>;
+  }
+
   if (!authenticated) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -244,10 +275,14 @@ const Admin = () => {
           <div className="text-center">
             <ShieldCheck className="w-12 h-12 text-primary mx-auto mb-2" />
             <h1 className="text-xl font-heading font-bold text-foreground">Área do Administrador</h1>
-            <p className="text-sm text-muted-foreground">Digite a senha para acessar</p>
+            <p className="text-sm text-muted-foreground">{isSignUp ? "Crie sua conta de promotor" : "Entre com sua conta"}</p>
           </div>
-          <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Senha" className="bg-background" />
-          <Button type="submit" className="w-full">Entrar</Button>
+          <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" className="bg-background" required />
+          <Input type="password" minLength={6} required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Senha" className="bg-background" />
+          <Button type="submit" className="w-full">{isSignUp ? "Criar conta" : "Entrar"}</Button>
+          <button type="button" onClick={() => setIsSignUp(!isSignUp)} className="w-full text-sm text-muted-foreground hover:text-foreground">
+            {isSignUp ? "Já tenho conta" : "Primeiro acesso? Criar conta"}
+          </button>
         </form>
       </div>
     );
