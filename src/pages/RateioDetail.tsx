@@ -80,11 +80,6 @@ const RateioDetail = () => {
     setParticipants((prev) => [...prev, participant]);
   };
 
-  const removeParticipant = async (pid: string) => {
-    await supabase.from("participants").delete().eq("id", pid);
-    setParticipants((prev) => prev.filter((p) => p.id !== pid));
-  };
-
   const handleReceiptUploaded = (pid: string, url: string) => {
     setParticipants((prev) =>
       prev.map((p) => (p.id === pid ? { ...p, receipt_url: url } : p))
@@ -134,7 +129,6 @@ const RateioDetail = () => {
               totalPrice={totalPrice}
               totalWeight={rateio.total_quantity}
               unitLabel={unitLabel}
-              onRemove={removeParticipant}
               onReceiptUploaded={handleReceiptUploaded}
             />
           </div>
@@ -144,7 +138,6 @@ const RateioDetail = () => {
             totalPrice={totalPrice}
             totalWeight={rateio.total_quantity}
             unitLabel={unitLabel}
-            onRemove={removeParticipant}
             onReceiptUploaded={handleReceiptUploaded}
           />
         )}
