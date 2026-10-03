@@ -6,12 +6,12 @@ import { Upload, CheckCircle, Loader2 } from "lucide-react";
 
 interface ReceiptUploadProps {
   participantId: string;
-  participantName: string;
+  participantName?: string;
   existingUrl?: string | null;
   onUploaded: (id: string, url: string) => void;
 }
 
-const ReceiptUpload = ({ participantId, participantName, existingUrl, onUploaded }: ReceiptUploadProps) => {
+const ReceiptUpload = ({ participantId, existingUrl, onUploaded }: ReceiptUploadProps) => {
   const [uploading, setUploading] = useState(false);
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -25,29 +25,19 @@ const ReceiptUpload = ({ participantId, participantName, existingUrl, onUploaded
 
     setUploading(true);
     try {
-      const ext = file.name.split(".").pop();
+      const ext = (file.name.split(".").pop() || "bin").replace(/[^A-Za-z0-9]/g, "").slice(0, 5) || "bin";
       const path = `${participantId}.${ext}`;
 
-      const { error: uploadError } = await supabase.storage
-        .from("receipts")
-        .upload(path, file, { upsert: true });
-
+      const { error: uploadError } = await supabase.storage.from("receipts").upload(path, file);
       if (uploadError) throw uploadError;
 
-      const { data: urlData } = supabase.storage
-        .from("receipts")
-        .getPublicUrl(path);
+      const { data: ok, error: rpcError } = await supabase.rpc("set_participant_receipt", {
+        _participant_id: participantId,
+        _path: path,
+      });
+      if (rpcError || !ok) throw rpcError || new Error("receipt not saved");
 
-      const receiptUrl = urlData.publicUrl;
-
-      const { error: updateError } = await supabase
-        .from("participants")
-        .update({ receipt_url: receiptUrl })
-        .eq("id", participantId);
-
-      if (updateError) throw updateError;
-
-      onUploaded(participantId, receiptUrl);
+      onUploaded(participantId, "sent");
       toast({ title: "Comprovante enviado com sucesso! ✅" });
     } catch (err) {
       console.error(err);
@@ -61,9 +51,7 @@ const ReceiptUpload = ({ participantId, participantName, existingUrl, onUploaded
     return (
       <div className="flex items-center gap-1.5 text-xs text-success">
         <CheckCircle className="w-3.5 h-3.5" />
-        <a href={existingUrl} target="_blank" rel="noopener noreferrer" className="underline">
-          Comprovante enviado
-        </a>
+        <span>Comprovante enviado</span>
       </div>
     );
   }
@@ -79,13 +67,7 @@ const ReceiptUpload = ({ participantId, participantName, existingUrl, onUploaded
         disabled={uploading}
       />
       <label htmlFor={`receipt-${participantId}`}>
-        <Button
-          variant="outline"
-          size="sm"
-          className="text-xs gap-1.5 cursor-pointer"
-          asChild
-          disabled={uploading}
-        >
+        <Button variant="outline" size="sm" className="text-xs gap-1.5 cursor-pointer" asChild disabled={uploading}>
           <span>
             {uploading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />}
             {uploading ? "Enviando..." : "Enviar comprovante"}
