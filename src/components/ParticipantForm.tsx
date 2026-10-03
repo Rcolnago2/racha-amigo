@@ -44,7 +44,9 @@ const ParticipantForm = ({
 
     setLoading(true);
     try {
-      const { data, error } = await supabase.from("participants").insert({
+      const id = crypto.randomUUID();
+      const { error } = await supabase.from("participants").insert({
+        id,
         name: name.trim(),
         email: email.trim(),
         phone: phone.trim(),
@@ -53,11 +55,11 @@ const ParticipantForm = ({
         weight_kg: weight,
         product_name: "rateio",
         rateio_id: rateioId,
-      }).select().single();
+      });
 
       if (error) throw error;
 
-      onAdd({ id: data.id, name: data.name, email: data.email, phone: data.phone, percent: data.percent });
+      onAdd({ id, name: name.trim(), email: email.trim(), phone: phone.trim(), percent: effectivePercent });
       setPixData({ value, name: name.trim(), pixKey, merchantName: pixMerchantName });
       setName(""); setEmail(""); setPhone(""); setPercent(10); setConfirmed(false);
       toast({ title: "Participação registrada!" });

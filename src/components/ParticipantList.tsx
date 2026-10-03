@@ -34,7 +34,7 @@ function maskEmail(email: string): string {
 
 function maskPhone(phone: string): string {
   const digits = phone.replace(/\D/g, "");
-  if (digits.length < 4) return "***";
+  if (digits.length < 2) return "***";
   const last2 = digits.slice(-2);
   return `***-**${last2}`;
 }
@@ -54,7 +54,7 @@ interface ParticipantListProps {
   totalPrice: number;
   totalWeight: number;
   unitLabel?: string;
-  onRemove: (id: string) => void;
+  onRemove?: (id: string) => void;
   onReceiptUploaded: (id: string, url: string) => void;
 }
 
@@ -88,9 +88,11 @@ const ParticipantList = ({ participants, totalPrice, totalWeight, unitLabel = "k
                   </p>
                   <p className="text-xs text-muted-foreground truncate">{maskEmail(p.email)} · {maskPhone(p.phone)}</p>
                 </div>
-                <Button variant="ghost" size="icon" onClick={() => onRemove(p.id)} className="text-muted-foreground hover:text-destructive shrink-0">
-                  <Trash2 className="w-4 h-4" />
-                </Button>
+                {onRemove && (
+                  <Button variant="ghost" size="icon" onClick={() => onRemove(p.id)} className="text-muted-foreground hover:text-destructive shrink-0">
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                )}
               </div>
               <div className="flex items-center justify-between">
                 {p.payment_confirmed ? (

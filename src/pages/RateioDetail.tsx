@@ -40,12 +40,10 @@ const RateioDetail = () => {
       }
       if (rateioRes.data) {
         setRateio(rateioRes.data);
-        const { data: partData } = await supabase
-          .from("participants")
-          .select("id, name, email, phone, percent, receipt_url, payment_confirmed")
-          .eq("rateio_id", rateioRes.data.id)
-          .order("created_at", { ascending: true });
-        if (partData) setParticipants(partData);
+        const { data: partData } = await supabase.rpc("get_public_participants", {
+          _rateio_id: rateioRes.data.id,
+        });
+        if (partData) setParticipants(partData.map((p) => ({ ...p, name: "" })));
       }
       setLoading(false);
     };
@@ -80,11 +78,6 @@ const RateioDetail = () => {
 
   const addParticipant = (participant: Participant) => {
     setParticipants((prev) => [...prev, participant]);
-  };
-
-  const removeParticipant = async (pid: string) => {
-    await supabase.from("participants").delete().eq("id", pid);
-    setParticipants((prev) => prev.filter((p) => p.id !== pid));
   };
 
   const handleReceiptUploaded = (pid: string, url: string) => {
@@ -136,7 +129,6 @@ const RateioDetail = () => {
               totalPrice={totalPrice}
               totalWeight={rateio.total_quantity}
               unitLabel={unitLabel}
-              onRemove={removeParticipant}
               onReceiptUploaded={handleReceiptUploaded}
             />
           </div>
@@ -146,7 +138,6 @@ const RateioDetail = () => {
             totalPrice={totalPrice}
             totalWeight={rateio.total_quantity}
             unitLabel={unitLabel}
-            onRemove={removeParticipant}
             onReceiptUploaded={handleReceiptUploaded}
           />
         )}
