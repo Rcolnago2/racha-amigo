@@ -110,14 +110,14 @@ const Index = () => {
       </header>
 
       <main>
-        <section id="inicio" className="border-b border-border bg-card">
+        <section id="inicio" className="border-b border-border bg-card dark:bg-background">
           <div className="mx-auto grid max-w-6xl gap-10 px-5 py-14 md:grid-cols-[1.15fr_0.85fr] md:items-center md:px-8 md:py-20">
             <div className="max-w-2xl">
               <span className="mb-5 inline-flex items-center gap-2 rounded-full bg-secondary px-3 py-1.5 text-xs font-bold uppercase text-secondary-foreground">
                 <Users className="h-4 w-4" /> Comprar junto vale mais
               </span>
               <h1 className="text-4xl font-extrabold leading-tight text-foreground sm:text-5xl md:text-6xl">
-                O jeito inteligente de comprar em grupo
+                O jeito inteligente de <span className="dark:text-primary">comprar em grupo</span>
               </h1>
               <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">
                 Organize uma compra coletiva, divida quantidade e valor com clareza e acompanhe a participação de cada pessoa em um só lugar.
@@ -134,7 +134,7 @@ const Index = () => {
 
             <div className="relative mx-auto w-full max-w-md">
               <div className="absolute -left-5 top-12 h-24 w-3 rounded-full bg-accent" aria-hidden="true" />
-              <div className="relative overflow-hidden rounded-lg border border-border bg-background p-7 shadow-xl">
+              <div className="relative overflow-hidden rounded-lg border border-border bg-background p-7 shadow-xl dark:bg-card dark:border-primary/10">
                 <img src={logoImage} alt="Rateio Amigo — juntos, você compra mais" className="mx-auto w-full max-w-xs object-contain" />
                 <div className="mt-5 grid grid-cols-3 gap-2 border-t border-border pt-5 text-center">
                   <div><p className="text-xl font-bold text-foreground">1</p><p className="text-xs text-muted-foreground">produto</p></div>
@@ -164,36 +164,36 @@ const Index = () => {
                 <div><p className="text-sm font-bold text-primary">02</p><h3 className="mt-1 text-xl font-bold text-foreground">Compartilhe e reúna</h3><p className="mt-2 text-sm leading-relaxed text-muted-foreground">Envie o link certo para amigos ou abra a oportunidade para novas pessoas.</p></div>
               </div>
             </article>
-            <article className="rounded-lg border border-border bg-foreground p-7 md:col-span-3">
+            <article className="rounded-lg border border-border bg-foreground p-7 md:col-span-3 dark:bg-primary">
               <div className="flex items-start gap-5">
                 <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-background/15 text-background"><PackageCheck /></div>
-                <div><p className="text-sm font-bold text-accent">03</p><h3 className="mt-1 text-xl font-bold text-background">Confirme e finalize</h3><p className="mt-2 text-sm leading-relaxed text-background/70">Cada participante escolhe sua parte, paga via PIX e envia o comprovante.</p></div>
+                 <div><p className="text-sm font-bold text-accent dark:text-primary-foreground">03</p><h3 className="mt-1 text-xl font-bold text-background">Confirme e finalize</h3><p className="mt-2 text-sm leading-relaxed text-background/70 dark:text-primary-foreground">Cada participante escolhe sua parte, paga via PIX e envia o comprovante.</p></div>
               </div>
             </article>
           </div>
         </section>
 
-        <section id="modalidades" className="bg-foreground py-16 text-background md:py-20">
+        <section id="modalidades" className="bg-foreground py-16 text-background md:py-20 dark:bg-background dark:text-foreground">
           <div className="mx-auto max-w-6xl px-5 md:px-8">
             <div className="mb-10 max-w-2xl">
               <p className="mb-2 text-sm font-bold uppercase text-accent">Você escolhe quem participa</p>
               <h2 className="text-3xl font-bold md:text-4xl">Três formas de organizar seu rateio</h2>
             </div>
             <div className="grid gap-4 md:grid-cols-3">
-              <article className="rounded-lg border border-background/15 bg-background/5 p-7">
+              <article className="rounded-lg border border-background/15 bg-background/5 p-7 dark:border-border dark:bg-card">
                 <LockKeyhole className="mb-8 h-7 w-7 text-accent" />
                 <h3 className="text-2xl font-bold">Rateio secreto</h3>
-                <p className="mt-3 text-sm leading-relaxed text-background/70">As condições aparecem na vitrine, mas o acesso depende do promotor. Quem se interessar envia seus dados para análise.</p>
+                <p className="mt-3 text-sm leading-relaxed text-background/70 dark:text-muted-foreground">As condições aparecem na vitrine, mas o acesso depende do promotor. Quem se interessar envia seus dados para análise.</p>
               </article>
-              <article className="rounded-lg border border-primary/50 bg-primary/10 p-7">
+              <article className="rounded-lg border border-primary/50 bg-primary/10 p-7 dark:border-border dark:bg-card">
                 <Users className="mb-8 h-7 w-7 text-primary" />
                 <h3 className="text-2xl font-bold">Entre amigos</h3>
-                <p className="mt-3 text-sm leading-relaxed text-background/70">Não aparece na lista pública. O grupo participa usando o endereço exato compartilhado pelo promotor.</p>
+                <p className="mt-3 text-sm leading-relaxed text-background/70 dark:text-muted-foreground">Não aparece na lista pública. O grupo participa usando o endereço exato compartilhado pelo promotor.</p>
               </article>
-              <article className="rounded-lg border border-background/15 bg-background/5 p-7">
-                <Eye className="mb-8 h-7 w-7 text-background" />
+              <article className="rounded-lg border border-background/15 bg-background/5 p-7 dark:border-border dark:bg-card">
+                <Eye className="mb-8 h-7 w-7 text-background dark:text-foreground" />
                 <h3 className="text-2xl font-bold">Rateio público</h3>
-                <p className="mt-3 text-sm leading-relaxed text-background/70">Fica visível na página e qualquer pessoa pode abrir, conhecer as condições e reservar sua parte.</p>
+                <p className="mt-3 text-sm leading-relaxed text-background/70 dark:text-muted-foreground">Fica visível na página e qualquer pessoa pode abrir, conhecer as condições e reservar sua parte.</p>
               </article>
             </div>
           </div>

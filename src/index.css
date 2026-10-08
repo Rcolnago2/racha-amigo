@@ -50,7 +50,7 @@
     --font-body: 'Figtree', sans-serif;
   }
 
-  .dark {
+  .dark, :root:has(#root .dark) {
     color-scheme: dark;
     --background: 170 15% 7.84%;
     --foreground: 0 0% 100%;
@@ -84,11 +84,6 @@
   }
 }
 
-/* Portals render outside the app root, so inherit the same dark tokens. */
-body:has(#root .dark) {
-  color-scheme: dark;
-  background: hsl(170 15% 7.84%);
-}
 
 @layer base {
   * {
