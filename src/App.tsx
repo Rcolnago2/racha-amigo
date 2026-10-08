@@ -11,6 +11,7 @@ import NotFound from "./pages/NotFound.tsx";
 const queryClient = new QueryClient();
 
 const App = () => (
+  <div className="dark min-h-screen bg-background text-foreground">
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
@@ -27,6 +28,7 @@ const App = () => (
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
+  </div>
 );
 
 export default App;

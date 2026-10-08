@@ -51,26 +51,43 @@
   }
 
   .dark {
-    --background: 25 20% 8%;
-    --foreground: 39 30% 90%;
-    --card: 25 20% 12%;
-    --card-foreground: 39 30% 90%;
-    --popover: 25 20% 12%;
-    --popover-foreground: 39 30% 90%;
-    --primary: 36 80% 50%;
-    --primary-foreground: 25 20% 8%;
-    --secondary: 25 20% 18%;
-    --secondary-foreground: 39 30% 90%;
-    --muted: 25 15% 18%;
-    --muted-foreground: 35 15% 55%;
-    --accent: 25 60% 50%;
-    --accent-foreground: 25 20% 8%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 25 15% 22%;
-    --input: 25 15% 22%;
-    --ring: 36 80% 50%;
+    color-scheme: dark;
+    --background: 170 15% 7.84%;
+    --foreground: 0 0% 100%;
+    --card: 166.67 13.85% 12.75%;
+    --card-foreground: 0 0% 100%;
+    --popover: 166.67 13.85% 12.75%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 160.47 53.97% 46.86%;
+    --primary-foreground: 170 15% 7.84%;
+    --secondary: 166.67 13.85% 12.75%;
+    --secondary-foreground: 160.47 53.97% 46.86%;
+    --muted: 166.67 13.85% 12.75%;
+    --muted-foreground: 218 11% 65%;
+    --accent: 41.39 100% 48.04%;
+    --accent-foreground: 170 15% 7.84%;
+    --destructive: 0 72% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 165 12% 23%;
+    --input: 165 12% 27%;
+    --ring: 160.47 53.97% 46.86%;
+    --success: 160.47 53.97% 46.86%;
+    --success-foreground: 170 15% 7.84%;
+    --sidebar-background: 170 15% 7.84%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 160.47 53.97% 46.86%;
+    --sidebar-primary-foreground: 170 15% 7.84%;
+    --sidebar-accent: 166.67 13.85% 12.75%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 165 12% 23%;
+    --sidebar-ring: 160.47 53.97% 46.86%;
   }
+}
+
+/* Portals render outside the app root, so inherit the same dark tokens. */
+body:has(#root .dark) {
+  color-scheme: dark;
+  background: hsl(170 15% 7.84%);
 }
 
 @layer base {
